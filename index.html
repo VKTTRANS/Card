@@ -52,7 +52,7 @@
   <div id="view-admin" class="view-section container py-4 mx-auto" style="max-width: 600px;">
     <div class="text-center mb-4">
       <h3 class="text-success fw-bold"><i class="bi bi-qr-code-scan me-2"></i>ระบบสร้างนามบัตร (Admin)</h3>
-      <p class="text-muted small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code ไปสั่งพิมพ์</p>
+      <p class="text-muted small">ค้นหารายชื่อพนักงานเพื่อสร้าง QR Code สำหรับนามบัตรดิจิทัล</p>
     </div>
 
     <div class="input-group mb-4 shadow-sm">
@@ -60,7 +60,7 @@
       <input type="text" id="searchInput" class="form-control bg-dark text-white border-secondary shadow-none" placeholder="ค้นหาชื่อ, รหัสพนักงาน..." onkeyup="filterList()">
     </div>
 
-    <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh;">
+    <div id="empList" class="overflow-auto pe-2" style="max-height: 65vh;">
       </div>
   </div>
 
@@ -73,8 +73,8 @@
           <img id="qrImage" src="" alt="QR Code" width="200" height="200">
         </div>
         <div class="d-grid gap-2">
-          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold"><i class="bi bi-download me-2"></i>บันทึกรูป QR Code</a>
-          <button class="btn btn-outline-secondary rounded-pill" onclick="copyLink()"><i class="bi bi-link-45deg me-2"></i>คัดลอกลิงก์</button>
+          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold"><i class="bi bi-download me-2"></i>ดาวน์โหลด QR Code</a>
+          <button class="btn btn-outline-secondary rounded-pill" onclick="copyLink()"><i class="bi bi-link-45deg me-2"></i>คัดลอกลิงก์นามบัตร</button>
         </div>
       </div>
     </div>
@@ -86,14 +86,14 @@
       
       <div class="card-body p-4 pt-0 position-relative">
         <div class="position-relative d-inline-block mb-3" style="margin-top: -70px;">
-          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover" style="width: 140px; height: 140px; background-color: #222; border: 4px solid #121212;">
+          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover" style="width: 140px; height: 140px; background-color: #222; border: 4px solid #121212;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
         <h3 id="vcName" class="fw-bold mb-1 text-white">...</h3>
         <p id="vcPosition" class="text-success fw-bold mb-4">...</p>
         
         <div class="bg-black bg-opacity-25 rounded-4 p-3 mb-4 border border-secondary border-opacity-25 text-start">
-          <div class="d-flex align-items-center mb-3">
+          <div class="d-flex align-items-center mb-3 border-bottom border-secondary border-opacity-25 pb-3">
             <div class="bg-dark rounded p-2 me-3 text-success"><i class="bi bi-telephone-fill fs-5"></i></div>
             <div>
               <small class="text-muted d-block" style="font-size: 0.75rem;">เบอร์โทรศัพท์</small>
@@ -109,8 +109,8 @@
           </div>
         </div>
 
-        <button onclick="saveContact()" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-lg text-dark" style="background: linear-gradient(135deg, #00E676, #00C853);">
-          <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ
+        <button onclick="saveContact()" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-lg text-dark" style="background: linear-gradient(135deg, #00E676, #00C853); border:none;">
+          <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ (Save Contact)
         </button>
       </div>
     </div>
@@ -120,8 +120,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    // ** ใส่ Web App URL ที่เพิ่ง Deploy ใหม่ตรงนี้ **
-    const API_URL = "https://script.google.com/a/macros/vkttransport.com/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
+    // อัปเดต URL API ที่ถูกต้องแล้ว
+    const API_URL = "https://script.google.com/macros/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
     
     let allEmployees = [];
     let currentVcardLink = "";
@@ -129,7 +129,7 @@
 
     window.onload = async function() {
       const urlParams = new URLSearchParams(window.location.search);
-      const userParam = urlParams.get('user'); // จับ parameter ?user=VKT...
+      const userParam = urlParams.get('user');
 
       if (userParam) {
         document.getElementById('view-vcard').classList.add('active');
@@ -149,9 +149,8 @@
         });
         const result = await response.json();
         if (result.status === 'success') return result.data;
-        throw new Error(result.message);
+        throw new Error(result.message || JSON.stringify(result));
       } catch (err) {
-        Swal.fire('Error', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error');
         throw err;
       }
     }
@@ -159,29 +158,50 @@
     // ==========================================
     // สำหรับหน้า Admin
     // ==========================================
-  async function loadAdminList() {
+    async function loadAdminList() {
       try {
         const result = await callAPI({ action: 'getAllEmployees' });
         
-        // เช็คให้ชัวร์ว่าข้อมูลที่ได้มาเป็น Array จริงๆ ค่อยเอาไปใส่ allEmployees
+        // เช็กว่าข้อมูลที่ได้มาเป็น Array หรือไม่ ป้องกัน Error (.filter is not a function)
         if (Array.isArray(result)) {
             allEmployees = result;
         } else {
-            console.error("API คืนค่ามาผิดปกติ:", result);
-            allEmployees = []; // ถ้าพังให้เป็นค่าว่างไว้ หน้าเว็บจะได้ไม่ Error
+            console.error("API Response is not an array:", result);
+            allEmployees = [];
         }
 
         renderList(allEmployees);
         document.getElementById('loader').style.display = 'none';
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
-        Swal.fire('Error', 'ไม่สามารถโหลดรายชื่อพนักงานได้', 'error');
+        Swal.fire({icon: 'error', title: 'การเชื่อมต่อผิดพลาด', text: 'ไม่สามารถดึงข้อมูลจากระบบได้ โปรดตรวจสอบการอัปเดต API', background: '#222', color: '#fff'});
       }
     }
 
-    function filterList() {
-      if (!Array.isArray(allEmployees)) return; // ป้องกัน Error .filter is not a function
+    function renderList(list) {
+      const container = document.getElementById('empList');
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted py-4">ไม่พบข้อมูลพนักงาน</div>';
+        return;
+      }
+      
+      let html = '';
+      list.forEach(emp => {
+        html += `
+          <div class="emp-list-item d-flex justify-content-between align-items-center" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
+            <div>
+              <div class="fw-bold text-white">${emp.name}</div>
+              <div class="small text-muted">${emp.empId} | ${emp.position}</div>
+            </div>
+            <i class="bi bi-qr-code text-success fs-3"></i>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
 
+    function filterList() {
+      if (!Array.isArray(allEmployees)) return;
       const txt = document.getElementById('searchInput').value.toLowerCase();
       const filtered = allEmployees.filter(e => e.name.toLowerCase().includes(txt) || e.empId.toLowerCase().includes(txt));
       renderList(filtered);
@@ -201,7 +221,6 @@
       qrImg.src = ""; // เคลียร์ภาพเก่า
       qrImg.src = qrUrl;
 
-      // เซ็ตลิงก์ให้ปุ่มดาวน์โหลด (ต้องแปลงภาพ QR เป็น Data URI ก่อนถึงจะโหลดข้ามโดเมนได้ แต่ใช้ URL ตรงๆ กดปุ๊บจะเปิดหน้าใหม่แทน แอดมินคลิกขวาเซฟได้)
       document.getElementById('downloadQrBtn').href = qrUrl;
       document.getElementById('downloadQrBtn').setAttribute('target', '_blank');
 
@@ -235,6 +254,7 @@
         }
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
+        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถโหลดข้อมูลนามบัตรได้', background: '#222', color: '#fff'});
       }
     }
 
