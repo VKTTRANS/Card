@@ -15,7 +15,7 @@
   <style>
     :root {
       --bg-dark: #07090c;
-      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-bg: #161b22;
       --accent: #00E676;
       --accent-glow: 0 0 20px rgba(0, 230, 118, 0.6);
       --text-main: #ffffff;
@@ -51,10 +51,9 @@
 
     .glass-card {
       background: var(--card-bg);
-      backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 24px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
       animation: bouncyIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
       width: 100%;
     }
@@ -89,81 +88,51 @@
     .emp-list-item:hover .btn-qr { background-color: var(--accent); color: #000 !important; box-shadow: var(--accent-glow); transform: rotate(360deg); }
 
     #view-vcard.active {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px 15px;
     }
 
-    .vcard-container { width: 100%; max-width: 450px; margin: 0 auto; perspective: 1000px; }
+    .vcard-container { width: 100%; max-width: 420px; margin: 0 auto; perspective: 1000px; }
     
     .vcard-header {
-      height: 140px; 
+      height: 130px; 
       background: linear-gradient(135deg, #00E676 0%, #004d40 100%);
       position: relative; overflow: hidden; border-radius: 24px 24px 0 0;
     }
-    .vcard-header::after {
-      content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
-      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
-      animation: slideBg 20s linear infinite;
-    }
-    @keyframes slideBg { 100% { transform: translate(50px, 50px); } }
 
-    .vcard-avatar-wrapper { margin-top: -70px; margin-bottom: 10px; position: relative; z-index: 2; }
+    .vcard-avatar-wrapper { margin-top: -65px; margin-bottom: 15px; position: relative; z-index: 2; }
     .vcard-avatar {
-      width: 140px; height: 140px; border: 5px solid var(--card-bg); background-color: #141820;
-      animation: pulseAvatar 2s infinite alternate;
-    }
-    @keyframes pulseAvatar {
-      0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
-      100% { box-shadow: 0 0 0 12px rgba(0, 230, 118, 0); }
+      width: 130px; height: 130px; border: 5px solid var(--card-bg); background-color: #141820;
     }
 
     .info-box {
-      background: #11151c; border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px; margin-bottom: 15px; padding: 5px 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+      background: #0d1117; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; margin-bottom: 20px; padding: 5px 20px;
     }
     
     .info-item {
-      display: flex; align-items: center; padding: 14px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);
-      opacity: 0; animation: slideRight 0.5s forwards;
+      display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);
     }
     .info-item:last-child { border-bottom: none; }
-    
-    @keyframes slideRight {
-      from { opacity: 0; transform: translateX(-30px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
 
     .info-icon {
-      width: 46px; height: 46px; min-width: 46px; border-radius: 12px; background: rgba(255,255,255,0.05);
+      width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-      margin-right: 15px; font-size: 1.3rem; transition: 0.3s;
+      margin-right: 15px; font-size: 1.2rem;
     }
-    .info-item:hover .info-icon { background: var(--accent); color: #000 !important; transform: scale(1.1); box-shadow: var(--accent-glow); }
     
     .info-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 2px; font-weight: 500; }
     .info-text { font-size: 1.05rem; }
     
     .btn-save {
-      background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000; transition: 0.3s; position: relative; overflow: hidden; padding: 14px 0;
+      background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000; padding: 14px 0;
     }
-    .btn-save::before {
-      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shine 3s infinite;
-    }
-    @keyframes shine { 100% { left: 200%; } }
-    .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
 
     .btn-download {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; transition: 0.3s; padding: 10px 0;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 0;
     }
-    .btn-download:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
 
     @media (max-width: 576px) {
-      .vcard-container { max-width: 100%; padding: 0 !important; height: 100vh; display: flex; flex-direction: column; }
-      .glass-card { border-radius: 0; min-height: 100vh; display: flex; flex-direction: column; border: none; }
-      .card-body { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 24px !important; }
-      .vcard-header { border-radius: 0; height: 16vh; }
-      .vcard-avatar-wrapper { margin-top: -10vh; }
-      #vcard-action-buttons { margin-top: auto !important; margin-bottom: 20px !important; }
+      .vcard-container { max-width: 100%; }
     }
 
     ::-webkit-scrollbar { width: 6px; }
@@ -191,15 +160,15 @@
   </div>
 
   <div id="view-admin" class="view-section container py-5 mx-auto" style="max-width: 700px;">
-    <div class="text-center mb-5" style="animation: slideUpFade 0.6s forwards;">
+    <div class="text-center mb-5">
       <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle pulse-logo" style="width: 80px; height: 80px; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent); box-shadow: var(--accent-glow);">
         <i class="bi bi-qr-code-scan text-success" style="font-size: 2.2rem;"></i>
       </div>
-      <h2 class="text-white fw-bold mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.5);">VKT Digital vCard</h2>
+      <h2 class="text-white fw-bold mb-1">VKT Digital vCard</h2>
       <p class="text-sub small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code</p>
     </div>
 
-    <div class="input-group mb-4 shadow-lg rounded-pill overflow-hidden border border-secondary border-opacity-50" style="background: rgba(20,25,35,0.8); backdrop-filter: blur(10px); animation: slideUpFade 0.7s forwards;">
+    <div class="input-group mb-4 shadow-lg rounded-pill overflow-hidden border border-secondary border-opacity-50" style="background: rgba(20,25,35,0.8); backdrop-filter: blur(10px);">
       <span class="input-group-text bg-transparent border-0 text-success ps-4"><i class="bi bi-search fs-5"></i></span>
       <input type="text" id="searchInput" class="form-control bg-transparent border-0 shadow-none py-3 search-input fw-medium" placeholder="พิมพ์ชื่อ หรือ รหัสพนักงานที่ต้องการค้นหา..." onkeyup="filterList()">
     </div>
@@ -207,13 +176,11 @@
     <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;"></div>
   </div>
 
-  <!-- แก้ไข Modal เพิ่ม id="qrEmpId" ป้องกัน Error -->
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
+      <div class="modal-content text-center p-4 glass-card border-success">
         <h5 id="qrEmpName" class="text-white fw-bold mb-1 fs-4">...</h5>
-        <p id="qrEmpPos" class="text-success small mb-2 fw-bold">...</p>
-        <div class="mb-3"><span id="qrEmpId" class="badge bg-dark border border-secondary text-white font-monospace">...</span></div>
+        <p id="qrEmpPos" class="text-success small mb-3 fw-bold">...</p>
         <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg" style="border: 3px solid var(--accent);">
           <canvas id="qrCanvas" class="rounded"></canvas>
         </div>
@@ -226,19 +193,19 @@
     </div>
   </div>
 
-  <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
-    <div id="capture-card" class="glass-card text-center position-relative w-100 pb-3">
+  <div id="view-vcard" class="view-section vcard-container">
+    <div id="capture-card" class="glass-card text-center position-relative w-100 pb-4">
       <div class="vcard-header"></div>
       <div class="card-body px-4 pb-0 pt-0">
         <div class="vcard-avatar-wrapper">
           <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" crossorigin="anonymous" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
-        <h3 id="vcName" class="fw-bold mb-1 text-white fs-3">...</h3>
+        <h3 id="vcName" class="fw-bold mb-1 text-white fs-4">...</h3>
         <p id="vcPosition" class="text-success fw-medium mb-4" style="font-size: 0.95rem;">...</p>
         
         <div class="info-box text-start">
-          <div class="info-item" style="animation-delay: 0.1s;">
+          <div class="info-item">
             <div class="info-icon text-light"><i class="bi bi-person-vcard"></i></div>
             <div class="lh-sm">
               <div class="info-label">รหัสพนักงาน (ID)</div>
@@ -246,7 +213,7 @@
             </div>
           </div>
 
-          <div class="info-item" style="animation-delay: 0.2s;">
+          <div class="info-item">
             <div class="info-icon text-danger"><i class="bi bi-cake2"></i></div>
             <div class="lh-sm">
               <div class="info-label">อายุ (Age)</div>
@@ -254,7 +221,7 @@
             </div>
           </div>
 
-          <div class="info-item" style="animation-delay: 0.3s;">
+          <div class="info-item">
             <div class="info-icon text-warning"><i class="bi bi-calendar-check"></i></div>
             <div class="lh-sm">
               <div class="info-label">อายุการทำงาน</div>
@@ -262,7 +229,7 @@
             </div>
           </div>
 
-          <div class="info-item" style="animation-delay: 0.4s;">
+          <div class="info-item">
             <div class="info-icon text-success"><i class="bi bi-telephone-fill"></i></div>
             <div class="lh-sm">
               <div class="info-label">เบอร์โทรศัพท์ (Phone)</div>
@@ -270,7 +237,7 @@
             </div>
           </div>
 
-          <div class="info-item" style="animation-delay: 0.5s;">
+          <div class="info-item">
             <div class="info-icon text-info"><i class="bi bi-building"></i></div>
             <div class="lh-sm">
               <div class="info-label">บริษัท (Company)</div>
@@ -279,11 +246,11 @@
           </div>
         </div>
 
-        <div id="vcard-action-buttons" class="d-flex flex-column gap-2 w-100" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.6s; opacity: 0; margin-top: 20px;">
+        <div id="vcard-action-buttons" class="d-flex flex-column gap-2 w-100 mt-4">
           <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill fw-bold shadow-lg fs-5">
             <i class="bi bi-person-plus-fill me-2"></i>เซฟเบอร์ลงเครื่อง
           </button>
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 mt-2">
             <button onclick="downloadCardImage()" class="btn btn-download w-50 rounded-pill fw-bold shadow-sm fs-6">
               <i class="bi bi-image me-1"></i>เซฟนามบัตร
             </button>
@@ -297,30 +264,29 @@
     </div>
   </div>
 
-  <div id="idCardExport" style="position: absolute; top: -9999px; left: -9999px; width: 540px; height: 856px; background-color: #ffffff; border-radius: 25px; overflow: hidden; font-family: 'Sarabun', sans-serif;">
-    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 35px; position: relative;">
-      <div style="position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.05) 15px, rgba(255,255,255,0.05) 30px); z-index: 1;"></div>
-      <h1 style="font-weight: 700; margin: 0; font-size: 50px; letter-spacing: 3px; position: relative; z-index: 2;">V K T</h1>
-      <h3 style="font-weight: 500; margin: 0; font-size: 20px; letter-spacing: 1px; position: relative; z-index: 2;">TRANSPORT SYSTEM</h3>
+  <div id="idCardExport" style="position: absolute; top: -9999px; left: -9999px; width: 540px; height: 856px; background-color: #ffffff; border-radius: 20px; overflow: hidden; font-family: 'Sarabun', sans-serif; box-sizing: border-box;">
+    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 45px;">
+      <div style="font-weight: 700; font-size: 55px; letter-spacing: 3px; line-height: 1.1;">V K T</div>
+      <div style="font-weight: 500; font-size: 20px; letter-spacing: 1px;">TRANSPORT SYSTEM</div>
     </div>
     
-    <div style="text-align: center; margin-top: -110px; position: relative; z-index: 3;">
-      <img id="idCardPhoto" src="" style="width: 220px; height: 220px; object-fit: cover; border-radius: 50%; border: 10px solid #ffffff; background-color: #e9ecef;" crossorigin="anonymous">
+    <div style="text-align: center; margin-top: -100px;">
+      <img id="idCardPhoto" src="" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 8px solid #ffffff; background-color: #e9ecef;" crossorigin="anonymous">
     </div>
     
-    <div style="text-align: center; margin-top: 25px; padding: 0 40px; color: #121212;">
-      <h2 id="idCardName" style="font-weight: 700; font-size: 34px; margin: 0; line-height: 1.2;">ชื่อ นามสกุล</h2>
-      <p id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 22px; margin: 10px 0;">ตำแหน่ง</p>
+    <div style="text-align: center; margin-top: 20px; padding: 0 40px; color: #121212;">
+      <div id="idCardName" style="font-weight: 700; font-size: 32px; margin: 0; line-height: 1.3;">ชื่อ นามสกุล</div>
+      <div id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 20px; margin: 5px 0;">ตำแหน่ง</div>
       
-      <div style="margin-top: 25px; display: inline-block; background: #f8f9fa; padding: 15px 50px; border-radius: 15px; border: 2px solid #e9ecef;">
-        <p style="margin: 0; font-size: 16px; color: #6c757d; font-weight: 500;">รหัสพนักงาน (ID)</p>
-        <p id="idCardEmpId" style="margin: 0; font-weight: 700; font-size: 32px; font-family: monospace; color: #212529;">VKT0000</p>
+      <div style="background-color: #f0f2f5; padding: 15px 30px; border-radius: 12px; border: 2px solid #e9ecef; width: 75%; margin: 25px auto 0;">
+        <div style="font-size: 16px; color: #6c757d; font-weight: 500; margin-bottom: 5px;">รหัสพนักงาน (ID)</div>
+        <div id="idCardEmpId" style="font-weight: 700; font-size: 32px; font-family: monospace; color: #212529;">VKT0000</div>
       </div>
     </div>
     
     <div style="text-align: center; margin-top: 35px;">
       <canvas id="idCardQR" style="border: 4px solid #fff; border-radius: 10px;"></canvas>
-      <p style="margin-top: 12px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</p>
+      <div style="margin-top: 10px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</div>
     </div>
   </div>
 
@@ -473,7 +439,6 @@
       
       document.getElementById('qrEmpName').innerText = name;
       document.getElementById('qrEmpPos').innerText = position;
-      document.getElementById('qrEmpId').innerText = `ID: ${empId}`;
       
       const qr = new QRious({
         element: document.getElementById('qrCanvas'),
@@ -566,52 +531,30 @@
       const cardElement = document.getElementById('capture-card');
       const actionButtons = document.getElementById('vcard-action-buttons');
       
-      const origWidth = cardElement.style.width;
-      const origMaxWidth = cardElement.style.maxWidth;
-      const origMargin = cardElement.style.margin;
-      
-      cardElement.style.width = '450px';
-      cardElement.style.maxWidth = '450px';
+      cardElement.style.width = '420px';
+      cardElement.style.maxWidth = '420px';
       cardElement.style.margin = '0 auto';
       actionButtons.style.display = 'none'; 
       
       try {
         const canvas = await html2canvas(cardElement, {
           scale: 2, 
-          useCORS: true,
-          allowTaint: true,
           backgroundColor: '#0a0c10',
           logging: false,
           onclone: function (clonedDoc) {
              const clonedCard = clonedDoc.getElementById('capture-card');
              if(clonedCard) {
-                 clonedCard.style.backdropFilter = 'none';
                  clonedCard.style.backgroundColor = '#161b22'; 
-                 clonedCard.style.boxShadow = 'none';
                  clonedCard.style.animation = 'none';
-                 clonedCard.style.width = '450px';
-                 clonedCard.style.maxWidth = '450px';
-                 clonedCard.style.minHeight = 'auto';
-                 clonedCard.style.borderRadius = '24px';
+                 clonedCard.style.width = '420px';
+                 clonedCard.style.maxWidth = '420px';
                  clonedCard.style.margin = '0 auto';
              }
-             const clonedBody = clonedCard.querySelector('.card-body');
-             if(clonedBody) clonedBody.style.padding = '0 24px 24px 24px';
-
-             const clonedInfoBox = clonedDoc.querySelector('.info-box');
-             if(clonedInfoBox) {
-                 clonedInfoBox.style.boxShadow = 'none';
-                 clonedInfoBox.style.backgroundColor = '#11151c';
-                 clonedInfoBox.style.border = '1px solid #30363d';
-             }
-             const animatedElements = clonedDoc.querySelectorAll('*');
-             animatedElements.forEach(el => { el.style.animation = 'none'; el.style.opacity = '1'; });
           }
         });
         
-        cardElement.style.width = origWidth;
-        cardElement.style.maxWidth = origMaxWidth;
-        cardElement.style.margin = origMargin;
+        cardElement.style.width = '100%';
+        cardElement.style.maxWidth = '450px';
         actionButtons.style.display = 'flex'; 
         
         const imgData = canvas.toDataURL('image/png');
@@ -622,12 +565,11 @@
         Swal.close();
         Swal.fire({toast: true, position: 'top', icon: 'success', title: 'บันทึกนามบัตรลงเครื่องสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
       } catch (error) {
-        cardElement.style.width = origWidth;
-        cardElement.style.maxWidth = origMaxWidth;
-        cardElement.style.margin = origMargin;
+        cardElement.style.width = '100%';
+        cardElement.style.maxWidth = '450px';
         actionButtons.style.display = 'flex';
         Swal.close();
-        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้ (Error)', background: '#161b22', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้', background: '#161b22', color: '#fff'});
       }
     }
 
@@ -640,8 +582,6 @@
       try {
         const canvas = await html2canvas(idCardElement, {
           scale: 2, 
-          useCORS: true,
-          allowTaint: true,
           backgroundColor: '#ffffff', 
           logging: false
         });
