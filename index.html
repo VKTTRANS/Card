@@ -317,7 +317,7 @@
     </div>
     
     <div style="text-align: center; margin-top: 35px;">
-      <img id="idCardQR" src="" style="width: 140px; height: 140px; border: 4px solid #fff; border-radius: 10px;" crossorigin="anonymous">
+      <canvas id="idCardQR" style="border: 4px solid #fff; border-radius: 10px;"></canvas>
       <p style="margin-top: 12px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</p>
     </div>
   </div>
@@ -359,12 +359,14 @@
       }
     }
 
-    // ฟังก์ชันแปลง URL ป้องกันปัญหาจอดำจาก CORS แบบใหม่ (ใช้ corsproxy.io ที่เสถียรกว่า)
     async function getSafeImageUrl(url) {
         if (!url || url === "-") return 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        if (url.includes("cdn-icons-png")) return url;
         try {
-            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+            const cleanUrl = url.replace(/^https?:\/\//, '');
+            const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(cleanUrl);
             const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error("Proxy failed");
             const blob = await response.blob();
             return await new Promise((resolve) => {
                 const reader = new FileReader();
@@ -372,7 +374,6 @@
                 reader.readAsDataURL(blob);
             });
         } catch (e) {
-            console.warn("Proxy Error, Fallback to Original URL");
             return url;
         }
     }
@@ -471,7 +472,6 @@
       document.getElementById('qrEmpName').innerText = name;
       document.getElementById('qrEmpPos').innerText = position;
       
-      // สร้าง QR Code ผ่านไลบรารีในเครื่อง (ไม่โหลดผ่านเน็ต หมดปัญหาล่ม 100%)
       const qr = new QRious({
         element: document.getElementById('qrCanvas'),
         value: currentVcardLink,
@@ -480,9 +480,7 @@
         padding: 5
       });
       
-      // เอา Data URL ยัดให้ปุ่มดาวน์โหลด
-      const qrDataUrl = qr.toDataURL();
-      document.getElementById('downloadQrBtn').href = qrDataUrl;
+      document.getElementById('downloadQrBtn').href = qr.toDataURL();
       document.getElementById('downloadQrBtn').setAttribute('download', 'QR_' + empId + '.png');
 
       new bootstrap.Modal(document.getElementById('qrModal')).show();
@@ -501,9 +499,7 @@
         if (res.success) {
           vcardData = res;
           
-          // เปลี่ยนรูปให้ผ่าน Proxy เพื่อจะได้เซฟรูปไม่ติดจอดำ
           const safePhotoData = await getSafeImageUrl(res.photo);
-          
           document.getElementById('vcPhoto').src = safePhotoData;
           document.getElementById('idCardPhoto').src = safePhotoData;
           
@@ -523,12 +519,16 @@
           document.getElementById('idCardPos').innerText = res.position || "-";
           document.getElementById('idCardEmpId').innerText = res.empId || "-";
           
-          // สร้าง QR Code ลงบนบัตรพนักงานผ่านไลบรารีในเครื่อง (ไม่ใช้ QuickChart อีกต่อไป)
           const baseUrl = window.location.href.split('?')[0]; 
           const vcardUrl = baseUrl + "?user=" + res.empId;
-          const tempCanvas = document.createElement('canvas');
-          const qrId = new QRious({ element: tempCanvas, value: vcardUrl, size: 140, level: 'M', padding: 5 });
-          document.getElementById('idCardQR').src = tempCanvas.toDataURL();
+          
+          new QRious({
+            element: document.getElementById('idCardQR'),
+            value: vcardUrl,
+            size: 140,
+            level: 'M',
+            padding: 5
+          });
 
           setTimeout(() => {
             document.getElementById('loader').style.opacity = '0';
@@ -567,7 +567,8 @@
       try {
         const canvas = await html2canvas(cardElement, {
           scale: 2, 
-          useCORS: true, 
+          useCORS: true,
+          allowTaint: true,
           backgroundColor: '#0a0c10',
           logging: false,
           onclone: function (clonedDoc) {
@@ -601,7 +602,7 @@
       } catch (error) {
         actionButtons.style.display = 'flex';
         Swal.close();
-        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้', background: '#161b22', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้ (Error)', background: '#161b22', color: '#fff'});
       }
     }
 
@@ -614,7 +615,8 @@
       try {
         const canvas = await html2canvas(idCardElement, {
           scale: 2, 
-          useCORS: true, 
+          useCORS: true,
+          allowTaint: true,
           backgroundColor: '#ffffff', 
           logging: false
         });
