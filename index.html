@@ -215,7 +215,7 @@
           <img id="qrImage" src="" alt="QR Code" width="220" height="220" class="rounded">
         </div>
         <div class="d-grid gap-2">
-          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold py-2"><i class="bi bi-download me-2"></i>โหลดรูป QR Code</a>
+          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold py-2"><i class="bi bi-download me-2"></i>บันทึกรูป QR Code</a>
           <button class="btn btn-dark border border-secondary rounded-pill py-2 text-light" onclick="copyLink()"><i class="bi bi-link-45deg me-2 fs-5 align-middle"></i>คัดลอกลิงก์</button>
           <button class="btn btn-link text-muted text-decoration-none mt-2" data-bs-dismiss="modal">ปิดหน้าต่าง</button>
         </div>
@@ -227,8 +227,9 @@
     <div id="capture-card" class="glass-card text-center position-relative w-100 pb-3">
       <div class="vcard-header"></div>
       <div class="card-body px-4 pb-0 pt-0">
+        
         <div class="vcard-avatar-wrapper">
-          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" crossorigin="anonymous">
+          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" crossorigin="anonymous" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
         <h3 id="vcName" class="fw-bold mb-1 text-white fs-3">...</h3>
@@ -478,19 +479,28 @@
         if (res.success) {
           vcardData = res;
           
-          document.getElementById('vcPhoto').src = res.photo;
+          // --- ระบบดึงรูประบุให้ผ่าน Proxy เพื่อบายพาส CORS จากฝั่ง Client (ป้องกันจอดำตอนแคปเจอร์) ---
+          let finalPhotoUrl = res.photo;
+          if (finalPhotoUrl && finalPhotoUrl.indexOf("drive.google.com") > -1) {
+              // ใช้ CORS Proxy ฟรี เพื่อให้เบราว์เซอร์มองว่าเป็นรูปที่โหลดมาได้แบบสมบูรณ์
+              finalPhotoUrl = "https://corsproxy.io/?" + encodeURIComponent(finalPhotoUrl);
+          }
+          
+          document.getElementById('vcPhoto').src = finalPhotoUrl;
+          
           let nick = (res.nickname && res.nickname.trim() !== "" && res.nickname !== "-") ? `(${res.nickname})` : "";
           document.getElementById('vcName').innerText = res.name + " " + nick;
           document.getElementById('vcPosition').innerText = res.position || "-";
           document.getElementById('vcEmpId').innerText = res.empId || "-";
           document.getElementById('vcAge').innerText = calcAge(res.birthDate);
           document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
+          
           let phoneText = String(res.phone || "");
           if(phoneText.length === 10) phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
           document.getElementById('vcPhone').innerText = phoneText || "-";
           document.getElementById('vcPhone').href = "tel:" + (res.phone || "");
 
-          document.getElementById('idCardPhoto').src = res.photo;
+          document.getElementById('idCardPhoto').src = finalPhotoUrl;
           document.getElementById('idCardName').innerText = res.name;
           document.getElementById('idCardPos').innerText = res.position || "-";
           document.getElementById('idCardEmpId').innerText = res.empId || "-";
@@ -519,7 +529,7 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
-    // ฟังก์ชันแก้ไขบั๊ก html2canvas โดนสกัดโดยการปิด Effect ชั่วคราวตอนกดถ่าย
+    // แคปเจอร์นามบัตร
     async function downloadCardImage() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างรูปภาพ...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
@@ -569,6 +579,7 @@
       }
     }
 
+    // แคปเจอร์บัตรพนักงาน
     async function downloadIDCard() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างบัตรพนักงาน...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
