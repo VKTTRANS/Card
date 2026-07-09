@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>VKT e-Business Card</title>
-  
   <link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=1_jSdNmS0pr8HoFuAINPBGqjrNq8xcwCG">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,233 +11,282 @@
 
   <style>
     :root {
-      --bg-dark: #0a0c10;
-      --card-bg: rgba(20, 24, 30, 0.98);
+      --bg-dark: #07090c;
+      --card-bg: rgba(22, 27, 34, 0.85);
       --accent: #00E676;
-      --text-label: #8b949e;
+      --accent-glow: 0 0 20px rgba(0, 230, 118, 0.6);
+      --text-main: #ffffff;
+      --text-sub: #a1aab5;
     }
+    
     body {
       font-family: 'Sarabun', sans-serif;
       background-color: var(--bg-dark);
-      background-image: radial-gradient(circle at 50% 0%, rgba(0, 230, 118, 0.05) 0%, transparent 50%);
-      color: #ffffff;
+      color: var(--text-main);
       min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    .bg-animated {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4;
+      animation: floatOrb 12s infinite ease-in-out alternate;
+    }
+    .orb-1 { width: 350px; height: 350px; background: #00E676; top: -100px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: #004d40; bottom: -150px; right: -100px; animation-delay: -5s; }
+    .orb-3 { width: 250px; height: 250px; background: #00b85c; top: 40%; left: 30%; animation-delay: -2s; opacity: 0.2; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 50px) scale(1.2); }
+    }
+
     .view-section { display: none; }
-    .view-section.active { display: block; animation: fadeUp 0.4s ease-out; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
+    .view-section.active { display: block; }
+
     .glass-card {
       background: var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+      animation: bouncyIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
-    
-    /* Search Bar Styles */
-    .search-input:focus {
-      background-color: #12151c !important;
-      border-color: var(--accent) !important;
-      box-shadow: 0 0 15px rgba(0, 230, 118, 0.2) !important;
+
+    @keyframes bouncyIn {
+      0% { opacity: 0; transform: scale(0.8) translateY(50px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .search-input {
       color: #fff !important;
     }
+    .search-input::placeholder {
+      color: #7a828e !important;
+      opacity: 1;
+    }
+    .search-input:focus {
+      background-color: #1c212b !important;
+      border-color: var(--accent) !important;
+      box-shadow: var(--accent-glow) !important;
+    }
 
-    /* List Styles (Admin) */
     .emp-list-item {
-      background: #141820; 
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 16px; margin-bottom: 10px; padding: 14px 18px;
-      cursor: pointer; transition: all 0.2s ease;
+      background: linear-gradient(145deg, #1c212b, #151921);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; margin-bottom: 12px; padding: 16px 20px;
+      cursor: pointer; 
+      opacity: 0;
+      animation: slideUpFade 0.5s ease forwards;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .emp-list-item:hover { 
-      background: #1a222d; 
-      border-color: rgba(0, 230, 118, 0.3); 
-      transform: translateY(-2px);
+      background: linear-gradient(145deg, #222834, #1a1f29);
+      border-color: var(--accent); 
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 230, 118, 0.2);
     }
-    .btn-qr { transition: all 0.2s; }
-    .emp-list-item:hover .btn-qr { background-color: var(--accent); color: #000 !important; }
 
-    /* ==================================
-       Mobile-First vCard Styles
-       ================================== */
-    .vcard-container {
-      max-width: 420px; /* จำกัดความกว้างให้ดูเหมือนมือถือแม้อยู่บนจอคอม */
-      margin: 0 auto;
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
+
+    .btn-qr {
+      background: rgba(0, 230, 118, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      transition: all 0.3s;
+    }
+    .emp-list-item:hover .btn-qr { 
+      background-color: var(--accent); 
+      color: #000 !important; 
+      box-shadow: var(--accent-glow);
+      transform: rotate(360deg);
+    }
+
+    .vcard-container { max-width: 420px; margin: 0 auto; perspective: 1000px; }
     
     .vcard-header {
-      height: 110px; /* ลดความสูงแถบเขียวลง */
-      background: linear-gradient(135deg, #00c853 0%, #004d40 100%);
+      height: 120px; 
+      background: linear-gradient(135deg, #00E676 0%, #004d40 100%);
       position: relative;
+      overflow: hidden;
     }
-    /* เพิ่ม Pattern จุดไข่ปลาจางๆ ให้ดูมีมิติ */
     .vcard-header::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
-      background-size: 10px 10px; opacity: 0.4;
+      content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+      animation: slideBg 20s linear infinite;
     }
+    @keyframes slideBg { 100% { transform: translate(50px, 50px); } }
 
     .vcard-avatar-wrapper {
-      margin-top: -55px; /* ดึงรูปขึ้นไปทับแถบเขียว */
-      margin-bottom: 10px;
-      position: relative;
-      z-index: 2;
+      margin-top: -60px; margin-bottom: 10px; position: relative; z-index: 2;
     }
     
     .vcard-avatar {
-      width: 110px; 
-      height: 110px;
-      border: 4px solid var(--card-bg);
+      width: 120px; height: 120px;
+      border: 5px solid var(--card-bg);
       background-color: #141820;
+      animation: pulseAvatar 2s infinite alternate;
+    }
+    @keyframes pulseAvatar {
+      0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+      100% { box-shadow: 0 0 0 15px rgba(0, 230, 118, 0); }
     }
 
     .info-box {
-      background: #0d1117;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      margin-bottom: 20px;
-      padding: 5px 15px;
+      background: #11151c;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; margin-bottom: 20px; padding: 5px 15px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
     
     .info-item {
-      display: flex;
-      align-items: center;
-      padding: 15px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);
+      opacity: 0; animation: slideRight 0.5s forwards;
     }
     .info-item:last-child { border-bottom: none; }
     
-    .info-icon {
-      width: 42px; height: 42px;
-      min-width: 42px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      display: flex; align-items: center; justify-content: center;
-      margin-right: 15px;
-      font-size: 1.2rem;
-    }
-    
-    .info-label {
-      color: var(--text-label);
-      font-size: 0.75rem;
-      margin-bottom: 2px;
-      font-weight: 500;
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
+    .info-icon {
+      width: 45px; height: 45px; min-width: 45px;
+      border-radius: 14px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 15px; font-size: 1.3rem;
+      transition: 0.3s;
+    }
+    .info-item:hover .info-icon {
+      background: var(--accent); color: #000 !important; transform: scale(1.1); box-shadow: var(--accent-glow);
+    }
+    
+    .info-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 2px; font-weight: 500; }
+    
+    .btn-save {
+      background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000;
+      transition: 0.3s; position: relative; overflow: hidden;
+    }
+    .btn-save::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shine 3s infinite;
+    }
+    @keyframes shine { 100% { left: 200%; } }
+    .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
+
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
     ::-webkit-scrollbar-thumb { background: rgba(0, 230, 118, 0.4); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     
     .spinner-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .pulse-logo { animation: scalePulse 1.5s infinite; }
+    @keyframes scalePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #00E676); } }
   </style>
 </head>
 <body>
 
-  <!-- Loader -->
+  <div class="bg-animated">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
   <div id="loader" class="spinner-wrapper">
-    <div class="spinner-border text-success" style="width: 3.5rem; height: 3.5rem; border-width: 0.25em;"></div>
-    <h5 class="mt-4 text-success fw-bold">กำลังเชื่อมต่อข้อมูล VKT...</h5>
+    <i class="bi bi-qr-code-scan text-success pulse-logo" style="font-size: 4rem;"></i>
+    <h5 class="mt-4 text-white fw-bold tracking-wide" style="letter-spacing: 2px;">VKT SYSTEM</h5>
+    <div class="spinner-border text-success mt-3" style="width: 2rem; height: 2rem; border-width: 0.2em;"></div>
   </div>
 
-  <!-- =============================== -->
-  <!-- 1. หน้า Admin สร้าง QR Code -->
-  <!-- =============================== -->
   <div id="view-admin" class="view-section container py-5 mx-auto" style="max-width: 700px;">
-    <div class="text-center mb-5">
-      <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle" style="width: 70px; height: 70px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0,230,118,0.3);">
-        <i class="bi bi-qr-code-scan text-success" style="font-size: 2rem;"></i>
+    <div class="text-center mb-5" style="animation: slideUpFade 0.6s forwards;">
+      <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle pulse-logo" style="width: 80px; height: 80px; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent); box-shadow: var(--accent-glow);">
+        <i class="bi bi-qr-code-scan text-success" style="font-size: 2.2rem;"></i>
       </div>
-      <h3 class="text-white fw-bold mb-1">VKT Digital vCard</h3>
-      <p class="text-secondary small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code ไปสั่งพิมพ์หรือแชร์</p>
+      <h2 class="text-white fw-bold mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.5);">VKT Digital vCard</h2>
+      <p class="text-sub small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code</p>
     </div>
 
-    <div class="input-group mb-4 shadow-lg rounded-pill overflow-hidden border border-secondary border-opacity-50" style="background: #141820;">
+    <div class="input-group mb-4 shadow-lg rounded-pill overflow-hidden border border-secondary border-opacity-50" style="background: rgba(20,25,35,0.8); backdrop-filter: blur(10px); animation: slideUpFade 0.7s forwards;">
       <span class="input-group-text bg-transparent border-0 text-success ps-4"><i class="bi bi-search fs-5"></i></span>
-      <input type="text" id="searchInput" class="form-control bg-transparent text-white border-0 shadow-none py-3 search-input" placeholder="พิมพ์ชื่อ หรือ รหัสพนักงานที่ต้องการค้นหา..." onkeyup="filterList()">
+      <input type="text" id="searchInput" class="form-control bg-transparent border-0 shadow-none py-3 search-input fw-medium" placeholder="พิมพ์ชื่อ หรือ รหัสพนักงานที่ต้องการค้นหา..." onkeyup="filterList()">
     </div>
 
-    <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;">
-      <!-- Employee List Injected Here -->
-    </div>
+    <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;"></div>
   </div>
 
-  <!-- Modal แสดง QR Code สำหรับ Admin -->
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content text-center p-4" style="background: #161b22; border: 1px solid rgba(0,230,118,0.5); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.9);">
+      <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
         <h5 id="qrEmpName" class="text-white fw-bold mb-1 fs-4">...</h5>
         <p id="qrEmpPos" class="text-success small mb-3 fw-bold">...</p>
-        <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg" style="border: 2px solid #fff;">
+        <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg" style="border: 3px solid var(--accent);">
           <img id="qrImage" src="" alt="QR Code" width="220" height="220" class="rounded">
         </div>
         <div class="d-grid gap-2">
           <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold py-2"><i class="bi bi-download me-2"></i>บันทึกรูป QR Code</a>
-          <button class="btn btn-dark border-secondary rounded-pill py-2 text-light" onclick="copyLink()"><i class="bi bi-link-45deg me-2 fs-5 align-middle"></i>คัดลอกลิงก์นามบัตร</button>
+          <button class="btn btn-dark border border-secondary rounded-pill py-2 text-light" onclick="copyLink()"><i class="bi bi-link-45deg me-2 fs-5 align-middle"></i>คัดลอกลิงก์</button>
+          <button class="btn btn-link text-muted text-decoration-none mt-2" data-bs-dismiss="modal">ปิดหน้าต่าง</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- =============================== -->
-  <!-- 2. หน้าแสดงนามบัตร (vCard) มือถือ -->
-  <!-- =============================== -->
   <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
     <div class="glass-card text-center position-relative">
       
-      <!-- ส่วน Header สีเขียว (ปรับขนาดให้เล็กลง) -->
       <div class="vcard-header"></div>
       
       <div class="card-body px-4 pb-4 pt-0">
-        <!-- รูปโปรไฟล์ -->
         <div class="vcard-avatar-wrapper">
           <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
-        <!-- ชื่อและตำแหน่ง -->
-        <h3 id="vcName" class="fw-bold mb-1 text-white" style="font-size: 1.35rem;">...</h3>
-        <p id="vcPosition" class="text-success fw-medium mb-4" style="font-size: 0.9rem;">...</p>
+        <h3 id="vcName" class="fw-bold mb-1 text-white fs-3">...</h3>
+        <p id="vcPosition" class="text-success fw-medium mb-4" style="font-size: 0.95rem;">...</p>
         
-        <!-- กล่องข้อมูล (ดีไซน์แบบ List สไตล์แอปมือถือ) -->
         <div class="info-box text-start">
-          
-          <div class="info-item">
+          <div class="info-item" style="animation-delay: 0.1s;">
             <div class="info-icon text-light"><i class="bi bi-person-vcard"></i></div>
             <div>
               <div class="info-label">รหัสพนักงาน (ID)</div>
-              <span id="vcEmpId" class="text-white fw-bold font-monospace">...</span>
+              <span id="vcEmpId" class="text-white fw-bold font-monospace fs-6">...</span>
             </div>
           </div>
 
-          <div class="info-item">
+          <div class="info-item" style="animation-delay: 0.2s;">
             <div class="info-icon text-warning"><i class="bi bi-calendar-check"></i></div>
             <div>
               <div class="info-label">อายุการทำงาน</div>
-              <span id="vcTenure" class="text-white fw-bold">...</span>
+              <span id="vcTenure" class="text-white fw-bold fs-6">...</span>
             </div>
           </div>
 
-          <div class="info-item">
+          <div class="info-item" style="animation-delay: 0.3s;">
             <div class="info-icon text-success"><i class="bi bi-telephone-fill"></i></div>
             <div>
               <div class="info-label">เบอร์โทรศัพท์ (Phone)</div>
-              <a id="vcPhone" href="#" class="text-white text-decoration-none fw-bold fs-6">...</a>
+              <a id="vcPhone" href="#" class="text-white text-decoration-none fw-bold fs-5">...</a>
             </div>
           </div>
 
-          <div class="info-item">
+          <div class="info-item" style="animation-delay: 0.4s;">
             <div class="info-icon text-info"><i class="bi bi-building"></i></div>
             <div>
               <div class="info-label">บริษัท (Company)</div>
               <span class="text-white fw-bold" style="font-size: 0.85rem;">VKT & TRANSPORT LIMITED PARTNERSHIP</span>
             </div>
           </div>
-
         </div>
 
-        <!-- ปุ่ม Action -->
-        <button onclick="saveContact()" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-lg text-dark hover-scale" style="background: linear-gradient(135deg, #00E676, #00C853); border:none; font-size: 1.05rem;">
+        <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill py-3 fw-bold shadow-lg fs-5 mt-2" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.5s; opacity: 0;">
           <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ
         </button>
       </div>
@@ -287,13 +335,9 @@
         if(!dateString) return 'ไม่ระบุวันที่เริ่มงาน'; 
         var start = new Date(dateString); 
         var now = new Date(); 
-        start.setHours(0,0,0,0);
-        now.setHours(0,0,0,0);
-
+        start.setHours(0,0,0,0); now.setHours(0,0,0,0);
         if(isNaN(start.getTime())) return "รูปแบบวันที่ไม่ถูกต้อง"; 
-        if (start.getTime() > now.getTime()) {
-             return 'รอเริ่มงาน';
-        }
+        if (start.getTime() > now.getTime()) return 'รอเริ่มงาน';
 
         var years = now.getFullYear() - start.getFullYear(); 
         var months = now.getMonth() - start.getMonth(); 
@@ -304,10 +348,7 @@
             var prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); 
             days += prevMonth.getDate(); 
         } 
-        if (months < 0) { 
-            years--; 
-            months += 12; 
-        } 
+        if (months < 0) { years--; months += 12; } 
         var result = []; 
         if (years > 0) result.push(years + " ปี"); 
         if (months > 0) result.push(months + " เดือน"); 
@@ -316,24 +357,18 @@
         return result.join(" "); 
     }
 
-    // ==========================================
-    // สำหรับหน้า Admin
-    // ==========================================
     async function loadAdminList() {
       try {
         const result = await callAPI({ action: 'getAllEmployees' });
-        
-        if (Array.isArray(result)) {
-            allEmployees = result;
-        } else {
-            allEmployees = [];
-        }
-
+        if (Array.isArray(result)) { allEmployees = result; } else { allEmployees = []; }
         renderList(allEmployees);
-        document.getElementById('loader').style.display = 'none';
+        setTimeout(() => {
+          document.getElementById('loader').style.opacity = '0';
+          setTimeout(() => document.getElementById('loader').style.display = 'none', 300);
+        }, 500);
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
-        Swal.fire({icon: 'error', title: 'การเชื่อมต่อผิดพลาด', text: 'ไม่สามารถดึงข้อมูลจากระบบได้', background: '#222', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'การเชื่อมต่อผิดพลาด', text: 'ไม่สามารถดึงข้อมูลได้', background: '#222', color: '#fff'});
       }
     }
 
@@ -345,19 +380,20 @@
       }
       
       let html = '';
-      list.forEach(emp => {
+      list.forEach((emp, index) => {
+        let delay = (index < 20) ? index * 0.05 : 0; 
         html += `
-          <div class="emp-list-item d-flex justify-content-between align-items-center shadow-sm" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
+          <div class="emp-list-item d-flex justify-content-between align-items-center shadow-sm" style="animation-delay: ${delay}s" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
             <div class="d-flex align-items-center gap-3">
-              <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center text-success" style="width: 45px; height: 45px; border: 1px solid rgba(0,230,118,0.3);">
+              <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center text-success" style="width: 48px; height: 48px; border: 1px solid rgba(0,230,118,0.2);">
                 <i class="bi bi-person-fill fs-4"></i>
               </div>
               <div>
                 <div class="fw-bold text-white fs-6 mb-1">${emp.name}</div>
-                <div class="small text-muted" style="font-size: 0.8rem;"><span class="text-success font-monospace">${emp.empId}</span> &bull; ${emp.position}</div>
+                <div class="small" style="color: var(--text-sub); font-size: 0.8rem;"><span class="text-success font-monospace">${emp.empId}</span> &bull; ${emp.position}</div>
               </div>
             </div>
-            <button class="btn btn-outline-success btn-sm rounded-circle btn-qr d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;"><i class="bi bi-qr-code fs-5"></i></button>
+            <button class="btn btn-sm rounded-circle btn-qr d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="bi bi-qr-code fs-5"></i></button>
           </div>
         `;
       });
@@ -374,16 +410,13 @@
     function showQR(empId, name, position) {
       const baseUrl = window.location.href.split('?')[0]; 
       currentVcardLink = baseUrl + "?user=" + empId;
-      
       const qrUrl = "https://quickchart.io/qr?size=500&margin=2&dark=000000&light=ffffff&text=" + encodeURIComponent(currentVcardLink);
       
       document.getElementById('qrEmpName').innerText = name;
       document.getElementById('qrEmpPos').innerText = position;
       
       const qrImg = document.getElementById('qrImage');
-      qrImg.src = ""; 
-      qrImg.src = qrUrl;
-
+      qrImg.src = ""; qrImg.src = qrUrl;
       document.getElementById('downloadQrBtn').href = qrUrl;
       document.getElementById('downloadQrBtn').setAttribute('target', '_blank');
 
@@ -396,13 +429,13 @@
       });
     }
 
-    // ==========================================
-    // สำหรับหน้าแสดงนามบัตร (vCard)
-    // ==========================================
     async function loadVCard(empId) {
       try {
         const res = await callAPI({ action: 'getVCardData', empId: empId });
-        document.getElementById('loader').style.display = 'none';
+        setTimeout(() => {
+          document.getElementById('loader').style.opacity = '0';
+          setTimeout(() => document.getElementById('loader').style.display = 'none', 300);
+        }, 500);
         
         if (res.success) {
           vcardData = res;
@@ -413,9 +446,7 @@
           document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
           
           let phoneText = res.phone;
-          if(phoneText.length === 10) {
-             phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
-          }
+          if(phoneText.length === 10) phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
           document.getElementById('vcPhone').innerText = phoneText;
           document.getElementById('vcPhone').href = "tel:" + res.phone;
         } else {
@@ -432,15 +463,11 @@
       if(!vcardData) return;
       var d = vcardData;
       var vcf = "BEGIN:VCARD\nVERSION:3.0\nN:;" + d.name + ";;;\nFN:" + d.name + "\nORG:VKT & TRANSPORT LIMITED PARTNERSHIP\nTITLE:" + d.position + "\nTEL;TYPE=CELL:" + d.phone + "\nNOTE:Employee ID: " + d.empId + "\nEND:VCARD";
-      
       var blob = new Blob([vcf], { type: "text/vcard" });
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
-      a.href = url;
-      a.download = d.name + "_VKT.vcf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      a.href = url; a.download = d.name + "_VKT.vcf";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
   </script>
 </body>
