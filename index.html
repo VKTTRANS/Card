@@ -225,7 +225,7 @@
   </div>
 
   <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
-    <div id="capture-card" class="glass-card text-center position-relative w-100 pb-3">
+    <div id="capture-card" class="glass-card text-center position-relative w-100 pb-3" style="margin: 0 auto;">
       <div class="vcard-header"></div>
       <div class="card-body px-4 pb-0 pt-0">
         <div class="vcard-avatar-wrapper">
@@ -295,30 +295,30 @@
     </div>
   </div>
 
-  <div id="idCardExport" style="position: absolute; top: -9999px; left: -9999px; width: 540px; height: 856px; background-color: #ffffff; border-radius: 25px; overflow: hidden; font-family: 'Sarabun', sans-serif;">
-    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 35px; position: relative;">
+  <div id="idCardExport" style="position: fixed; top: 0; left: 0; z-index: -9999; opacity: 0; pointer-events: none; width: 540px; height: 856px; background-color: #ffffff; border-radius: 25px; overflow: hidden; font-family: 'Sarabun', sans-serif;">
+    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 45px; position: relative;">
       <div style="position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.05) 15px, rgba(255,255,255,0.05) 30px); z-index: 1;"></div>
-      <h1 style="font-weight: 700; margin: 0; font-size: 50px; letter-spacing: 3px; position: relative; z-index: 2;">V K T</h1>
-      <h3 style="font-weight: 500; margin: 0; font-size: 20px; letter-spacing: 1px; position: relative; z-index: 2;">TRANSPORT SYSTEM</h3>
+      <h1 style="font-weight: 700; margin: 0; font-size: 55px; letter-spacing: 3px; position: relative; z-index: 2;">V K T</h1>
+      <h3 style="font-weight: 500; margin: 0; font-size: 22px; letter-spacing: 1px; position: relative; z-index: 2;">TRANSPORT SYSTEM</h3>
     </div>
     
-    <div style="text-align: center; margin-top: -110px; position: relative; z-index: 3;">
-      <img id="idCardPhoto" src="" style="width: 220px; height: 220px; object-fit: cover; border-radius: 50%; border: 10px solid #ffffff; background-color: #e9ecef;" crossorigin="anonymous">
+    <div style="text-align: center; margin-top: -100px; position: relative; z-index: 3;">
+      <img id="idCardPhoto" src="" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 8px solid #ffffff; background-color: #e9ecef;" crossorigin="anonymous">
     </div>
     
-    <div style="text-align: center; margin-top: 25px; padding: 0 40px; color: #121212;">
-      <h2 id="idCardName" style="font-weight: 700; font-size: 34px; margin: 0; line-height: 1.2;">ชื่อ นามสกุล</h2>
-      <p id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 22px; margin: 10px 0;">ตำแหน่ง</p>
+    <div style="text-align: center; margin-top: 20px; padding: 0 40px; color: #121212;">
+      <h2 id="idCardName" style="font-weight: 700; font-size: 32px; margin: 0; line-height: 1.2;">ชื่อ นามสกุล</h2>
+      <p id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 20px; margin: 8px 0;">ตำแหน่ง</p>
       
-      <div style="margin-top: 25px; display: inline-block; background: #f8f9fa; padding: 15px 50px; border-radius: 15px; border: 2px solid #e9ecef;">
-        <p style="margin: 0; font-size: 16px; color: #6c757d; font-weight: 500;">รหัสพนักงาน (ID)</p>
-        <p id="idCardEmpId" style="margin: 0; font-weight: 700; font-size: 32px; font-family: monospace; color: #212529;">VKT0000</p>
+      <div style="margin: 20px auto 0; background-color: #f8f9fa; padding: 15px; border-radius: 12px; border: 2px solid #e9ecef; width: 80%;">
+        <div style="font-size: 16px; color: #6c757d; font-weight: 500; margin-bottom: 5px;">รหัสพนักงาน (ID)</div>
+        <div id="idCardEmpId" style="font-weight: 700; font-size: 32px; font-family: monospace; color: #212529; margin: 0;">VKT0000</div>
       </div>
     </div>
     
-    <div style="text-align: center; margin-top: 35px;">
+    <div style="text-align: center; margin-top: 30px;">
       <canvas id="idCardQR" style="border: 4px solid #fff; border-radius: 10px;"></canvas>
-      <p style="margin-top: 12px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</p>
+      <p style="margin-top: 10px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</p>
     </div>
   </div>
 
@@ -562,6 +562,15 @@
       
       const cardElement = document.getElementById('capture-card');
       const actionButtons = document.getElementById('vcard-action-buttons');
+      
+      // ล็อคขนาดให้เป็น Desktop Size เสมอก่อนแคปเจอร์ จะได้ไม่ย่น
+      const origWidth = cardElement.style.width;
+      const origMaxWidth = cardElement.style.maxWidth;
+      const origMargin = cardElement.style.margin;
+      
+      cardElement.style.width = '450px';
+      cardElement.style.maxWidth = '450px';
+      cardElement.style.margin = '0 auto';
       actionButtons.style.display = 'none'; 
       
       try {
@@ -590,6 +599,10 @@
           }
         });
         
+        // คืนค่า
+        cardElement.style.width = origWidth;
+        cardElement.style.maxWidth = origMaxWidth;
+        cardElement.style.margin = origMargin;
         actionButtons.style.display = 'flex'; 
         
         const imgData = canvas.toDataURL('image/png');
@@ -600,6 +613,9 @@
         Swal.close();
         Swal.fire({toast: true, position: 'top', icon: 'success', title: 'บันทึกนามบัตรลงเครื่องสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
       } catch (error) {
+        cardElement.style.width = origWidth;
+        cardElement.style.maxWidth = origMaxWidth;
+        cardElement.style.margin = origMargin;
         actionButtons.style.display = 'flex';
         Swal.close();
         Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้ (Error)', background: '#161b22', color: '#fff'});
