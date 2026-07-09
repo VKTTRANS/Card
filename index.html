@@ -15,7 +15,7 @@
   <style>
     :root {
       --bg-dark: #07090c;
-      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-bg: #161b22;
       --accent: #00E676;
       --accent-glow: 0 0 20px rgba(0, 230, 118, 0.6);
       --text-main: #ffffff;
@@ -43,10 +43,9 @@
 
     .glass-card {
       background: var(--card-bg);
-      backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 24px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
       animation: bouncyIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
       width: 100%;
     }
@@ -72,7 +71,7 @@
     .btn-qr { background: rgba(0, 230, 118, 0.1); color: var(--accent); border: 1px solid rgba(0, 230, 118, 0.3); transition: all 0.3s; }
     .emp-list-item:hover .btn-qr { background-color: var(--accent); color: #000 !important; box-shadow: var(--accent-glow); transform: rotate(360deg); }
 
-    #view-vcard.active { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    #view-vcard.active { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px 15px; }
 
     .vcard-container { width: 100%; max-width: 420px; margin: 0 auto; perspective: 1000px; }
     
@@ -80,48 +79,25 @@
       height: 130px; background: linear-gradient(135deg, #00E676 0%, #004d40 100%);
       position: relative; overflow: hidden; border-radius: 24px 24px 0 0;
     }
-    .vcard-header::after {
-      content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
-      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
-      animation: slideBg 20s linear infinite;
-    }
-    @keyframes slideBg { 100% { transform: translate(50px, 50px); } }
 
-    .vcard-avatar-wrapper { margin-top: -65px; margin-bottom: 10px; position: relative; z-index: 2; }
-    .vcard-avatar { width: 130px; height: 130px; border: 5px solid var(--card-bg); background-color: #141820; animation: pulseAvatar 2s infinite alternate; }
-    @keyframes pulseAvatar { 0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); } 100% { box-shadow: 0 0 0 12px rgba(0, 230, 118, 0); } }
+    .vcard-avatar-wrapper { margin-top: -65px; margin-bottom: 15px; position: relative; z-index: 2; }
+    .vcard-avatar { width: 130px; height: 130px; border: 5px solid var(--card-bg); background-color: #141820; }
 
-    .info-box { background: #0d1117; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; margin-bottom: 15px; padding: 5px 20px; }
-    .info-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); opacity: 0; animation: slideRight 0.5s forwards; }
+    .info-box { background: #0d1117; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; margin-bottom: 20px; padding: 5px 20px; }
+    .info-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
     .info-item:last-child { border-bottom: none; }
-    @keyframes slideRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
 
     .info-icon {
       width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-      margin-right: 15px; font-size: 1.2rem; transition: 0.3s;
+      margin-right: 15px; font-size: 1.2rem;
     }
-    .info-item:hover .info-icon { background: var(--accent); color: #000 !important; transform: scale(1.1); box-shadow: var(--accent-glow); }
     
     .info-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 2px; font-weight: 500; }
     .info-text { font-size: 1.05rem; }
     
-    .btn-save { background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000; padding: 14px 0; position: relative; overflow: hidden; transition: 0.3s; }
-    .btn-save::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shine 3s infinite; }
-    @keyframes shine { 100% { left: 200%; } }
-    .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
-
-    .btn-download { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 0; transition: 0.3s; }
-    .btn-download:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
-
-    @media (max-width: 576px) {
-      .vcard-container { max-width: 100%; padding: 0 !important; height: 100vh; display: flex; flex-direction: column; }
-      .glass-card { border-radius: 0; min-height: 100vh; display: flex; flex-direction: column; border: none; box-shadow: none; }
-      .card-body { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 20px !important; }
-      .vcard-header { border-radius: 0; height: 16vh; }
-      .vcard-avatar-wrapper { margin-top: -10vh; }
-      #vcard-action-buttons { margin-top: auto !important; margin-bottom: 20px !important; }
-    }
+    .btn-save { background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000; padding: 14px 0; }
+    .btn-download { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 0; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
@@ -131,16 +107,6 @@
     .spinner-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .pulse-logo { animation: scalePulse 1.5s infinite; }
     @keyframes scalePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #00E676); } }
-
-    /* แม่พิมพ์ 1: บัตรพนักงานสีขาว */
-    #idCardExport {
-      position: fixed; left: -5000px; top: 0; width: 540px; height: 856px; background-color: #ffffff; border-radius: 20px; overflow: hidden; font-family: 'Sarabun', sans-serif; z-index: -1;
-    }
-    
-    /* แม่พิมพ์ 2: นามบัตรสีดำ */
-    #darkCardExport {
-      position: fixed; left: -5000px; top: 0; width: 420px; background-color: #161b22; border-radius: 24px; overflow: hidden; font-family: 'Sarabun', sans-serif; border: 1px solid #30363d; z-index: -1;
-    }
   </style>
 </head>
 <body>
@@ -162,7 +128,7 @@
       <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle pulse-logo" style="width: 80px; height: 80px; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent); box-shadow: var(--accent-glow);">
         <i class="bi bi-qr-code-scan text-success" style="font-size: 2.2rem;"></i>
       </div>
-      <h2 class="text-white fw-bold mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.5);">VKT Digital vCard</h2>
+      <h2 class="text-white fw-bold mb-1">VKT Digital vCard</h2>
       <p class="text-sub small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code</p>
     </div>
 
@@ -176,12 +142,12 @@
 
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
+      <div class="modal-content text-center p-4 glass-card border-success">
         <h5 id="qrEmpName" class="text-white fw-bold mb-1 fs-4">...</h5>
         <p id="qrEmpPos" class="text-success small mb-2 fw-bold">...</p>
         <div class="mb-3"><span id="qrEmpId" class="badge bg-dark border border-secondary text-white font-monospace">...</span></div>
         <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg" style="border: 3px solid var(--accent);">
-          <img id="qrModalImg" src="" style="width: 200px; height: 200px; border-radius: 8px;">
+          <img id="qrModalImg" src="" style="width: 200px; height: 200px; border-radius: 8px; object-fit: contain;">
         </div>
         <div class="d-grid gap-2">
           <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold py-2"><i class="bi bi-download me-2"></i>โหลดรูป QR Code</a>
@@ -192,16 +158,16 @@
     </div>
   </div>
 
-  <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
-    <div class="glass-card text-center position-relative w-100 pb-3" style="margin: 0 auto; overflow: hidden;">
+  <div id="view-vcard" class="view-section vcard-container">
+    <div class="glass-card text-center position-relative w-100 pb-4">
       <div class="vcard-header"></div>
-      <div class="card-body px-3 px-md-4 pb-3 pt-0">
+      <div class="card-body px-4 pb-0 pt-0">
         <div class="vcard-avatar-wrapper">
-          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" crossorigin="anonymous" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
-        <h3 id="vcName" class="fw-bold mb-0 text-white fs-4">...</h3>
-        <p id="vcPosition" class="text-success fw-medium mb-3 mt-1" style="font-size: 0.9rem;">...</p>
+        <h3 id="vcName" class="fw-bold mb-1 text-white fs-4">...</h3>
+        <p id="vcPosition" class="text-success fw-medium mb-4" style="font-size: 0.95rem;">...</p>
         
         <div class="info-box text-start">
           <div class="info-item">
@@ -245,7 +211,7 @@
           <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill fw-bold shadow-lg fs-5">
             <i class="bi bi-person-plus-fill me-2"></i>เซฟเบอร์ลงเครื่อง
           </button>
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 mt-2">
             <button onclick="downloadCardImage()" class="btn btn-download w-50 rounded-pill fw-bold shadow-sm fs-6">
               <i class="bi bi-image me-1"></i>เซฟนามบัตร
             </button>
@@ -254,65 +220,74 @@
             </button>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <div id="idCardExport">
-    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 45px;">
-      <div style="font-weight: 700; font-size: 55px; letter-spacing: 3px; line-height: 1.1;">V K T</div>
-      <div style="font-weight: 500; font-size: 20px; letter-spacing: 1px;">TRANSPORT SYSTEM</div>
-    </div>
-    <div style="text-align: center; margin-top: -100px;">
-      <img id="idCardPhoto" src="" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 8px solid #ffffff; background-color: #e9ecef;" crossorigin="anonymous">
-    </div>
-    <div style="text-align: center; margin-top: 20px; padding: 0 40px; color: #121212;">
-      <div id="idCardName" style="font-weight: 700; font-size: 32px; margin: 0; line-height: 1.3;">...</div>
-      <div id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 20px; margin: 8px 0;">...</div>
-      <div style="margin: 25px auto 0; background-color: #f8f9fa; padding: 15px; border-radius: 12px; border: 2px solid #e9ecef; width: 80%; text-align: center;">
-        <div style="font-size: 16px; color: #6c757d; font-weight: 500; margin-bottom: 5px;">รหัสพนักงาน (ID)</div>
-        <div id="idCardEmpId" style="font-weight: 700; font-size: 32px; font-family: monospace; color: #212529;">...</div>
+  <!-- แม่พิมพ์บัตรสำหรับการดาวน์โหลด (ซ่อนไว้เสมอ ล็อกขนาดตายตัว ป้องกันภาพย่น 100%) -->
+  <div id="export-templates-wrapper" style="position: absolute; left: -9999px; top: 0; pointer-events: none;">
+    
+    <!-- แม่พิมพ์: นามบัตรสีดำ -->
+    <div id="darkCardExport" style="width: 420px; height: 850px; background-color: #161b22; border-radius: 24px; overflow: hidden; font-family: 'Sarabun', sans-serif; border: 1px solid #30363d; box-sizing: border-box; display: flex; flex-direction: column;">
+      <div style="height: 140px; min-height: 140px; background: linear-gradient(135deg, #00E676 0%, #004d40 100%);"></div>
+      <div style="padding: 0 24px 24px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
+        <img id="darkCardPhoto" src="" style="width: 140px; height: 140px; min-height: 140px; border: 5px solid #161b22; border-radius: 50%; background-color: #141820; margin-top: -70px; object-fit: cover; display: block;" crossorigin="anonymous">
+        <div id="darkCardName" style="font-weight: 700; margin: 15px 0 5px; color: #ffffff; font-size: 24px;">...</div>
+        <div id="darkCardPos" style="color: #00E676; font-weight: 500; margin-bottom: 20px; font-size: 16px;">...</div>
+        
+        <div style="width: 100%; background: #0d1117; border: 1px solid #2a303c; border-radius: 20px; padding: 5px 20px; box-sizing: border-box;">
+          <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px;">👤</div>
+            <div style="text-align: left;"><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">รหัสพนักงาน (ID)</div><div id="darkCardEmpId" style="color: #ffffff; font-weight: 700; font-family: monospace; font-size: 17px;">...</div></div>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #ff5252; font-size: 20px;">🎂</div>
+            <div style="text-align: left;"><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">อายุ (Age)</div><div id="darkCardAge" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #ffca28; font-size: 20px;">📅</div>
+            <div style="text-align: left;"><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">อายุการทำงาน</div><div id="darkCardTenure" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #00E676; font-size: 20px;">📞</div>
+            <div style="text-align: left;"><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">เบอร์โทรศัพท์ (Phone)</div><div id="darkCardPhone" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
+          </div>
+          <div style="display: flex; align-items: center; padding: 15px 0;">
+            <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #40c4ff; font-size: 20px;">🏢</div>
+            <div style="text-align: left;"><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">บริษัท (Company)</div><div style="color: #ffffff; font-weight: 700; font-size: 14px;">VKT & TRANSPORT LIMITED PARTNERSHIP</div></div>
+          </div>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; width: 100%;">
+          <!-- แก้ไขเป็น img และใช้ object-fit เพื่อรับประกันความเหลี่ยมของ QR -->
+          <img id="darkCardQR" src="" style="width: 110px; height: 110px; border: 3px solid #fff; border-radius: 10px; display: block; margin: 0 auto; object-fit: contain;">
+          <div style="margin-top: 10px; font-size: 14px; color: #a1aab5;">สแกนเพื่อบันทึกผู้ติดต่อ</div>
+        </div>
       </div>
     </div>
-    <div style="text-align: center; margin-top: 35px;">
-      <img id="idCardQR" src="" style="width: 140px; height: 140px; border: 4px solid #fff; border-radius: 10px;">
-      <div style="margin-top: 10px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</div>
-    </div>
-  </div>
 
-  <div id="darkCardExport">
-    <div style="height: 130px; background: linear-gradient(135deg, #00E676 0%, #004d40 100%);"></div>
-    <div style="padding: 0 24px 24px; text-align: center;">
-      <img id="darkCardPhoto" src="" style="width: 130px; height: 130px; border: 5px solid #161b22; border-radius: 50%; background-color: #141820; margin-top: -65px; object-fit: cover;" crossorigin="anonymous">
-      <div id="darkCardName" style="font-weight: 700; margin: 10px 0 5px; color: #ffffff; font-size: 24px;">...</div>
-      <div id="darkCardPos" style="color: #00E676; font-weight: 500; margin-bottom: 20px; font-size: 15px;">...</div>
+    <!-- แม่พิมพ์: บัตรพนักงานสีขาว -->
+    <div id="idCardExport" style="width: 540px; height: 856px; background-color: #ffffff; border-radius: 20px; overflow: hidden; font-family: 'Sarabun', sans-serif; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;">
+      <div style="width: 100%; background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; min-height: 260px; text-align: center; color: white; padding-top: 45px; box-sizing: border-box;">
+        <div style="font-weight: 700; font-size: 55px; letter-spacing: 3px; line-height: 1.1;">V K T</div>
+        <div style="font-weight: 500; font-size: 20px; letter-spacing: 1px;">TRANSPORT SYSTEM</div>
+      </div>
       
-      <div style="background: #0d1117; border: 1px solid #2a303c; border-radius: 20px; padding: 5px 20px; text-align: left;">
-        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px;">👤</div>
-          <div><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">รหัสพนักงาน (ID)</div><div id="darkCardEmpId" style="color: #ffffff; font-weight: 700; font-family: monospace; font-size: 17px;">...</div></div>
-        </div>
-        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #ff5252; font-size: 20px;">🎂</div>
-          <div><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">อายุ (Age)</div><div id="darkCardAge" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
-        </div>
-        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #ffca28; font-size: 20px;">📅</div>
-          <div><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">อายุการทำงาน</div><div id="darkCardTenure" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
-        </div>
-        <div style="display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed #2a303c;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #00E676; font-size: 20px;">📞</div>
-          <div><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">เบอร์โทรศัพท์ (Phone)</div><div id="darkCardPhone" style="color: #ffffff; font-weight: 700; font-size: 17px;">...</div></div>
-        </div>
-        <div style="display: flex; align-items: center; padding: 15px 0;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 12px; background: #1c212b; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #40c4ff; font-size: 20px;">🏢</div>
-          <div><div style="color: #a1aab5; font-size: 12px; font-weight: 500;">บริษัท (Company)</div><div style="color: #ffffff; font-weight: 700; font-size: 14px;">VKT & TRANSPORT LIMITED PARTNERSHIP</div></div>
+      <img id="idCardPhoto" src="" style="width: 200px; height: 200px; min-height: 200px; object-fit: cover; border-radius: 50%; border: 8px solid #ffffff; background-color: #e9ecef; margin-top: -100px; display: block;" crossorigin="anonymous">
+      
+      <div style="width: 100%; text-align: center; margin-top: 20px; padding: 0 40px; box-sizing: border-box; color: #121212;">
+        <div id="idCardName" style="font-weight: 700; font-size: 32px; margin: 0; line-height: 1.3;">...</div>
+        <div id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 20px; margin: 8px 0;">...</div>
+        
+        <div style="margin: 25px auto 0; background-color: #f8f9fa; padding: 15px; border-radius: 12px; border: 2px solid #e9ecef; width: 380px; box-sizing: border-box;">
+          <div style="font-size: 16px; color: #6c757d; font-weight: 500; margin-bottom: 5px;">รหัสพนักงาน (ID)</div>
+          <div id="idCardEmpId" style="font-weight: 700; font-size: 32px; font-family: monospace; color: #212529; margin: 0;">...</div>
         </div>
       </div>
-      <div style="margin-top: 20px; text-align: center;">
-        <img id="darkCardQR" src="" style="width: 110px; height: 110px; border: 3px solid #fff; border-radius: 10px;">
-        <div style="margin-top: 10px; font-size: 14px; color: #a1aab5;">สแกนเพื่อบันทึกผู้ติดต่อ</div>
+      
+      <div style="margin-top: auto; padding-bottom: 35px; width: 100%; text-align: center;">
+        <img id="idCardQR" src="" style="width: 140px; height: 140px; border: 4px solid #fff; border-radius: 10px; display: block; margin: 0 auto; object-fit: contain;">
+        <div style="margin-top: 10px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</div>
       </div>
     </div>
   </div>
@@ -546,13 +521,22 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
-    // ฟังก์ชันแคปเจอร์รูปจากแม่พิมพ์ (ป้องกันภาพย่น / เบี้ยว 100%)
+    // แคปเจอร์นามบัตร (Dark Mode) - บังคับขนาดด้วย html2canvas properties
     async function downloadCardImage() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างรูปภาพ...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
       try {
         const darkElement = document.getElementById('darkCardExport');
-        const canvas = await html2canvas(darkElement, { scale: 2, useCORS: true, backgroundColor: '#161b22', logging: false });
+        const canvas = await html2canvas(darkElement, { 
+          scale: 2, 
+          useCORS: true, 
+          backgroundColor: '#161b22',
+          width: 420,
+          height: 850,
+          windowWidth: 420,
+          windowHeight: 850,
+          logging: false 
+        });
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png'); link.download = vcardData.name + '_VKT_Card.png'; link.click();
         Swal.close(); Swal.fire({toast: true, position: 'top', icon: 'success', title: 'บันทึกสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
@@ -561,12 +545,22 @@
       }
     }
 
+    // แคปเจอร์บัตรพนักงาน (White Mode) - บังคับขนาดด้วย html2canvas properties
     async function downloadIDCard() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างบัตรพนักงาน...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
       try {
         const whiteElement = document.getElementById('idCardExport');
-        const canvas = await html2canvas(whiteElement, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
+        const canvas = await html2canvas(whiteElement, { 
+          scale: 2, 
+          useCORS: true, 
+          backgroundColor: '#ffffff',
+          width: 540,
+          height: 856,
+          windowWidth: 540,
+          windowHeight: 856,
+          logging: false 
+        });
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png'); link.download = vcardData.empId + '_' + vcardData.name + '_IDCard.png'; link.click();
         Swal.close(); Swal.fire({toast: true, position: 'top', icon: 'success', title: 'ดาวน์โหลดสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
