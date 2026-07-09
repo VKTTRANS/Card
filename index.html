@@ -159,39 +159,29 @@
     // ==========================================
     // สำหรับหน้า Admin
     // ==========================================
-    async function loadAdminList() {
+  async function loadAdminList() {
       try {
-        allEmployees = await callAPI({ action: 'getAllEmployees' });
+        const result = await callAPI({ action: 'getAllEmployees' });
+        
+        // เช็คให้ชัวร์ว่าข้อมูลที่ได้มาเป็น Array จริงๆ ค่อยเอาไปใส่ allEmployees
+        if (Array.isArray(result)) {
+            allEmployees = result;
+        } else {
+            console.error("API คืนค่ามาผิดปกติ:", result);
+            allEmployees = []; // ถ้าพังให้เป็นค่าว่างไว้ หน้าเว็บจะได้ไม่ Error
+        }
+
         renderList(allEmployees);
         document.getElementById('loader').style.display = 'none';
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
+        Swal.fire('Error', 'ไม่สามารถโหลดรายชื่อพนักงานได้', 'error');
       }
-    }
-
-    function renderList(list) {
-      const container = document.getElementById('empList');
-      if (list.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted py-4">ไม่พบข้อมูลพนักงาน</div>';
-        return;
-      }
-      
-      let html = '';
-      list.forEach(emp => {
-        html += `
-          <div class="emp-list-item d-flex justify-content-between align-items-center" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
-            <div>
-              <div class="fw-bold text-white">${emp.name}</div>
-              <div class="small text-muted">${emp.empId} | ${emp.position}</div>
-            </div>
-            <i class="bi bi-qr-code text-success fs-3"></i>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
     }
 
     function filterList() {
+      if (!Array.isArray(allEmployees)) return; // ป้องกัน Error .filter is not a function
+
       const txt = document.getElementById('searchInput').value.toLowerCase();
       const filtered = allEmployees.filter(e => e.name.toLowerCase().includes(txt) || e.empId.toLowerCase().includes(txt));
       renderList(filtered);
