@@ -8,6 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  
+  <!-- 라이บรารี html2canvas สำหรับแปลงหน้าเว็บเป็นรูปภาพ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     :root {
@@ -149,13 +152,18 @@
     @keyframes shine { 100% { left: 200%; } }
     .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
 
+    .btn-download {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.2); color: #fff; transition: 0.3s; padding: 10px 0;
+    }
+    .btn-download:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
+
     @media (max-width: 576px) {
       .vcard-container { max-width: 100%; padding: 0 !important; height: 100vh; display: flex; flex-direction: column; }
       .glass-card { border-radius: 0; min-height: 100vh; display: flex; flex-direction: column; border: none; }
       .card-body { flex-grow: 1; display: flex; flex-direction: column; padding: 20px 24px !important; }
       .vcard-header { border-radius: 0; height: 16vh; }
       .vcard-avatar-wrapper { margin-top: -10vh; }
-      .btn-save { margin-top: auto !important; margin-bottom: 20px !important; }
+      #vcard-action-buttons { margin-top: auto !important; margin-bottom: 20px !important; }
     }
 
     ::-webkit-scrollbar { width: 6px; }
@@ -170,18 +178,23 @@
 </head>
 <body>
 
+  <!-- ฉากหลัง Animations -->
   <div class="bg-animated">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
   </div>
 
+  <!-- Loader -->
   <div id="loader" class="spinner-wrapper">
     <i class="bi bi-qr-code-scan text-success pulse-logo" style="font-size: 4rem;"></i>
     <h5 class="mt-4 text-white fw-bold tracking-wide" style="letter-spacing: 2px;">VKT SYSTEM</h5>
     <div class="spinner-border text-success mt-3" style="width: 2rem; height: 2rem; border-width: 0.2em;"></div>
   </div>
 
+  <!-- =============================== -->
+  <!-- 1. หน้า Admin สร้าง QR Code -->
+  <!-- =============================== -->
   <div id="view-admin" class="view-section container py-5 mx-auto" style="max-width: 700px;">
     <div class="text-center mb-5" style="animation: slideUpFade 0.6s forwards;">
       <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle pulse-logo" style="width: 80px; height: 80px; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent); box-shadow: var(--accent-glow);">
@@ -199,7 +212,7 @@
     <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;"></div>
   </div>
 
-  <!-- Modal Admin -->
+  <!-- Modal แสดง QR Code สำหรับ Admin -->
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
@@ -217,13 +230,15 @@
     </div>
   </div>
 
-  <!-- หน้าแสดงนามบัตรมือถือ -->
+  <!-- =============================== -->
+  <!-- 2. หน้าแสดงนามบัตร (vCard) -->
+  <!-- =============================== -->
   <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
-    <div class="glass-card text-center position-relative w-100">
+    <div id="capture-card" class="glass-card text-center position-relative w-100 pb-3">
       <div class="vcard-header"></div>
-      <div class="card-body px-4 pb-4 pt-0">
+      <div class="card-body px-4 pb-0 pt-0">
         <div class="vcard-avatar-wrapper">
-          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" crossorigin="anonymous">
         </div>
         
         <h3 id="vcName" class="fw-bold mb-1 text-white fs-3">...</h3>
@@ -266,15 +281,62 @@
             <div class="info-icon text-info"><i class="bi bi-building"></i></div>
             <div class="lh-sm">
               <div class="info-label">บริษัท (Company)</div>
-              <span class="text-white fw-bold" style="font-size: 0.9rem;">VKT & TRANSPORT LIMITED PARTNERSHIP</span>
+              <span class="text-white fw-bold" style="font-size: 0.85rem;">VKT & TRANSPORT LIMITED PARTNERSHIP</span>
             </div>
           </div>
         </div>
 
-        <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill fw-bold shadow-lg fs-5 mt-2" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.6s; opacity: 0;">
-          <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ
-        </button>
+        <!-- ชุดปุ่มกด -->
+        <div id="vcard-action-buttons" class="d-flex flex-column gap-2 w-100" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.6s; opacity: 0; margin-top: 20px;">
+          <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill fw-bold shadow-lg fs-5">
+            <i class="bi bi-person-plus-fill me-2"></i>เซฟเบอร์ลงเครื่อง
+          </button>
+          <div class="d-flex gap-2">
+            <button onclick="downloadCardImage()" class="btn btn-download w-50 rounded-pill fw-bold shadow-sm fs-6">
+              <i class="bi bi-image me-1"></i>เซฟนามบัตร
+            </button>
+            <button onclick="downloadIDCard()" class="btn btn-download w-50 rounded-pill fw-bold shadow-sm fs-6 text-warning border-warning">
+              <i class="bi bi-person-badge me-1"></i>บัตรพนักงาน
+            </button>
+          </div>
+        </div>
+
       </div>
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!-- 3. Template บัตรพนักงาน (ซ่อนไว้สำหรับดึงรูป) -->
+  <!-- =============================== -->
+  <div id="idCardExport" style="position: absolute; top: -9999px; left: -9999px; width: 540px; height: 856px; background-color: #ffffff; border-radius: 25px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); font-family: 'Sarabun', sans-serif;">
+    <!-- แถบด้านบนบัตร -->
+    <div style="background: linear-gradient(135deg, #00E676 0%, #004d40 100%); height: 260px; text-align: center; color: white; padding-top: 35px; position: relative;">
+      <!-- ลายน้ำพื้นหลัง -->
+      <div style="position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.05) 15px, rgba(255,255,255,0.05) 30px); z-index: 1;"></div>
+      <h1 style="font-weight: 700; margin: 0; font-size: 50px; letter-spacing: 3px; position: relative; z-index: 2; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">V K T</h1>
+      <h3 style="font-weight: 500; margin: 0; font-size: 20px; letter-spacing: 1px; position: relative; z-index: 2;">TRANSPORT SYSTEM</h3>
+    </div>
+    
+    <!-- รูปโปรไฟล์ -->
+    <div style="text-align: center; margin-top: -110px; position: relative; z-index: 3;">
+      <img id="idCardPhoto" src="" style="width: 220px; height: 220px; object-fit: cover; border-radius: 50%; border: 10px solid #ffffff; background-color: #e9ecef; box-shadow: 0 10px 20px rgba(0,0,0,0.15);" crossorigin="anonymous">
+    </div>
+    
+    <!-- ข้อมูลพนักงาน -->
+    <div style="text-align: center; margin-top: 25px; padding: 0 40px; color: #121212;">
+      <h2 id="idCardName" style="font-weight: 700; font-size: 34px; margin: 0; line-height: 1.2;">ชื่อ นามสกุล</h2>
+      <p id="idCardPos" style="color: #00b85c; font-weight: 600; font-size: 22px; margin: 10px 0;">ตำแหน่ง</p>
+      
+      <div style="margin-top: 25px; display: inline-block; background: #f8f9fa; padding: 15px 50px; border-radius: 15px; border: 2px solid #e9ecef;">
+        <p style="margin: 0; font-size: 16px; color: #6c757d; font-weight: 500;">รหัสพนักงาน (ID)</p>
+        <p id="idCardEmpId" style="margin: 0; font-weight: 700; font-size: 32px; font-family: monospace; color: #212529;">VKT0000</p>
+      </div>
+    </div>
+    
+    <!-- QR Code ท้ายบัตร -->
+    <div style="text-align: center; margin-top: 35px;">
+      <img id="idCardQR" src="" style="width: 140px; height: 140px; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px;" crossorigin="anonymous">
+      <p style="margin-top: 12px; font-size: 16px; color: #6c757d; font-weight: 500;">สแกนเพื่อดูนามบัตรดิจิทัล</p>
     </div>
   </div>
 
@@ -283,7 +345,6 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
-    
     let allEmployees = [];
     let currentVcardLink = "";
     let vcardData = null;
@@ -435,27 +496,31 @@
         
         if (res.success) {
           vcardData = res;
-          document.getElementById('vcPhoto').src = res.photo;
           
-          // แก้ไขบักชื่อเล่นตรงนี้ ดัก Error เรียบร้อย 100%
-          let nickStr = String(res.nickname || "").trim();
-          if (nickStr !== "" && nickStr !== "-" && nickStr !== "undefined") {
-              document.getElementById('vcName').innerText = res.name + " (" + nickStr + ")";
-          } else {
-              document.getElementById('vcName').innerText = res.name;
-          }
-
+          // โหลดข้อมูลใส่หน้า vCard บนเว็บ
+          document.getElementById('vcPhoto').src = res.photo;
+          let nick = (res.nickname && res.nickname.trim() !== "" && res.nickname !== "-") ? `(${res.nickname})` : "";
+          document.getElementById('vcName').innerText = res.name + " " + nick;
           document.getElementById('vcPosition').innerText = res.position || "-";
           document.getElementById('vcEmpId').innerText = res.empId || "-";
           document.getElementById('vcAge').innerText = calcAge(res.birthDate);
           document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
-          
           let phoneText = String(res.phone || "");
-          if(phoneText.length === 10) {
-              phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
-          }
+          if(phoneText.length === 10) phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
           document.getElementById('vcPhone').innerText = phoneText || "-";
           document.getElementById('vcPhone').href = "tel:" + (res.phone || "");
+
+          // โหลดข้อมูลใส่ Template บัตรพนักงาน (ที่ซ่อนไว้)
+          document.getElementById('idCardPhoto').src = res.photo;
+          document.getElementById('idCardName').innerText = res.name;
+          document.getElementById('idCardPos').innerText = res.position || "-";
+          document.getElementById('idCardEmpId').innerText = res.empId || "-";
+          
+          // สร้าง QR สำหรับบัตรพนักงาน
+          const baseUrl = window.location.href.split('?')[0]; 
+          const vcardUrl = baseUrl + "?user=" + res.empId;
+          document.getElementById('idCardQR').src = "https://quickchart.io/qr?size=300&margin=1&dark=000000&light=ffffff&text=" + encodeURIComponent(vcardUrl);
+
         } else {
           Swal.fire({icon: 'error', title: 'ไม่สามารถแสดงข้อมูลได้', text: res.message, background: '#161b22', color: '#fff'})
               .then(() => window.location.href = window.location.href.split('?')[0]); 
@@ -475,6 +540,65 @@
       var a = document.createElement("a");
       a.href = url; a.download = d.name + "_VKT.vcf";
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    async function downloadCardImage() {
+      if(!vcardData) return;
+      Swal.fire({title: 'กำลังสร้างรูปภาพ...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
+      
+      const cardElement = document.getElementById('capture-card');
+      const actionButtons = document.getElementById('vcard-action-buttons');
+      actionButtons.style.display = 'none'; // ซ่อนปุ่ม
+      
+      try {
+        const canvas = await html2canvas(cardElement, {
+          scale: 2, useCORS: true, backgroundColor: '#161b22', logging: false
+        });
+        actionButtons.style.display = 'flex'; // คืนปุ่มกลับมา
+        
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = imgData; link.download = vcardData.name + '_VKT_Card.png';
+        link.click();
+        
+        Swal.close();
+        Swal.fire({toast: true, position: 'top', icon: 'success', title: 'ดาวน์โหลดนามบัตรสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
+      } catch (error) {
+        console.error(error);
+        actionButtons.style.display = 'flex';
+        Swal.close();
+        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปภาพได้', background: '#161b22', color: '#fff'});
+      }
+    }
+
+    // ฟังก์ชันสำหรับสร้างและดาวน์โหลด "บัตรพนักงาน (ID Card)"
+    async function downloadIDCard() {
+      if(!vcardData) return;
+      Swal.fire({title: 'กำลังสร้างบัตรพนักงาน...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
+      
+      const idCardElement = document.getElementById('idCardExport');
+      
+      try {
+        const canvas = await html2canvas(idCardElement, {
+          scale: 2, // สเกล 2 เท่าเพื่อความคมชัดสำหรับนำไปพิมพ์
+          useCORS: true, 
+          backgroundColor: '#ffffff', 
+          logging: false
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = imgData; 
+        link.download = vcardData.empId + '_' + vcardData.name + '_IDCard.png';
+        link.click();
+        
+        Swal.close();
+        Swal.fire({toast: true, position: 'top', icon: 'success', title: 'ดาวน์โหลดบัตรพนักงานสำเร็จ', showConfirmButton: false, timer: 1500, background: '#161b22', color: '#fff'});
+      } catch (error) {
+        console.error(error);
+        Swal.close();
+        Swal.fire({icon: 'error', title: 'ผิดพลาด', text: 'ไม่สามารถสร้างรูปบัตรพนักงานได้ โปรดลองอีกครั้ง', background: '#161b22', color: '#fff'});
+      }
     }
   </script>
 </body>
