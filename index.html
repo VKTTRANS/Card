@@ -412,7 +412,6 @@
           document.getElementById('vcEmpId').innerText = res.empId;
           document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
           
-          // จัดรูปแบบเบอร์โทรศัพท์ (ถ้าเป็น 10 หลัก ให้ใส่ขีดเพื่อให้กดโทรง่ายขึ้น)
           let phoneText = res.phone;
           if(phoneText.length === 10) {
              phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
