@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  
 
   <style>
     :root {
@@ -46,14 +45,18 @@
 
     .view-section { display: none; }
     .view-section.active { display: block; }
+    
+    /* ให้หน้า vCard จัดเรียงแบบ Full Screen Center บนมือถือ */
+    #view-vcard.active {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
+    }
 
     .glass-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 24px;
+      background: var(--card-bg); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 24px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
       animation: bouncyIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      width: 100%;
     }
 
     @keyframes bouncyIn {
@@ -61,64 +64,37 @@
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .search-input {
-      color: #fff !important;
-    }
-    .search-input::placeholder {
-      color: #7a828e !important;
-      opacity: 1;
-    }
+    .search-input { color: #fff !important; }
+    .search-input::placeholder { color: #7a828e !important; opacity: 1; }
     .search-input:focus {
-      background-color: #1c212b !important;
-      border-color: var(--accent) !important;
-      box-shadow: var(--accent-glow) !important;
+      background-color: #1c212b !important; border-color: var(--accent) !important; box-shadow: var(--accent-glow) !important;
     }
 
     .emp-list-item {
-      background: linear-gradient(145deg, #1c212b, #151921);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px; margin-bottom: 12px; padding: 16px 20px;
-      cursor: pointer; 
-      opacity: 0;
-      animation: slideUpFade 0.5s ease forwards;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      background: linear-gradient(145deg, #1c212b, #151921); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; margin-bottom: 12px; padding: 16px 20px; cursor: pointer; opacity: 0;
+      animation: slideUpFade 0.5s ease forwards; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .emp-list-item:hover { 
-      background: linear-gradient(145deg, #222834, #1a1f29);
-      border-color: var(--accent); 
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 230, 118, 0.2);
+      background: linear-gradient(145deg, #222834, #1a1f29); border-color: var(--accent); 
+      transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 230, 118, 0.2);
     }
 
-    
     @keyframes slideUpFade {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .btn-qr {
-      background: rgba(0, 230, 118, 0.1);
-      color: var(--accent);
-      border: 1px solid rgba(0, 230, 118, 0.3);
-      transition: all 0.3s;
-    }
-    .emp-list-item:hover .btn-qr { 
-      background-color: var(--accent); 
-      color: #000 !important; 
-      box-shadow: var(--accent-glow);
-      transform: rotate(360deg);
-    }
+    .btn-qr { background: rgba(0, 230, 118, 0.1); color: var(--accent); border: 1px solid rgba(0, 230, 118, 0.3); transition: all 0.3s; }
+    .emp-list-item:hover .btn-qr { background-color: var(--accent); color: #000 !important; box-shadow: var(--accent-glow); transform: rotate(360deg); }
 
-    .vcard-container { max-width: 420px; margin: 0 auto; perspective: 1000px; }
+    .vcard-container { width: 100%; max-width: 400px; margin: 0 auto; perspective: 1000px; }
     
     .vcard-header {
-      height: 120px; 
+      height: 90px; 
       background: linear-gradient(135deg, #00E676 0%, #004d40 100%);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden; border-radius: 24px 24px 0 0;
     }
-
-    
     .vcard-header::after {
       content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
       background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
@@ -126,30 +102,23 @@
     }
     @keyframes slideBg { 100% { transform: translate(50px, 50px); } }
 
-    .vcard-avatar-wrapper {
-      margin-top: -60px; margin-bottom: 10px; position: relative; z-index: 2;
-    }
-    
+    .vcard-avatar-wrapper { margin-top: -45px; margin-bottom: 5px; position: relative; z-index: 2; }
     .vcard-avatar {
-      width: 120px; height: 120px;
-      border: 5px solid var(--card-bg);
-      background-color: #141820;
+      width: 90px; height: 90px; border: 4px solid var(--card-bg); background-color: #141820;
       animation: pulseAvatar 2s infinite alternate;
     }
     @keyframes pulseAvatar {
       0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
-      100% { box-shadow: 0 0 0 15px rgba(0, 230, 118, 0); }
+      100% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
     }
 
     .info-box {
-      background: #11151c;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px; margin-bottom: 20px; padding: 5px 15px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+      background: #11151c; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; margin-bottom: 15px; padding: 0 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
     
     .info-item {
-      display: flex; align-items: center; padding: 15px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);
+      display: flex; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.1);
       opacity: 0; animation: slideRight 0.5s forwards;
     }
     .info-item:last-child { border-bottom: none; }
@@ -160,27 +129,20 @@
     }
 
     .info-icon {
-      width: 45px; height: 45px; min-width: 45px;
-      border-radius: 14px; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      display: flex; align-items: center; justify-content: center;
-      margin-right: 15px; font-size: 1.3rem;
-      transition: 0.3s;
+      width: 38px; height: 38px; min-width: 38px; border-radius: 10px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+      margin-right: 12px; font-size: 1.1rem; transition: 0.3s;
     }
-    .info-item:hover .info-icon {
-      background: var(--accent); color: #000 !important; transform: scale(1.1); box-shadow: var(--accent-glow);
-    }
+    .info-item:hover .info-icon { background: var(--accent); color: #000 !important; transform: scale(1.1); box-shadow: var(--accent-glow); }
     
-    .info-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 2px; font-weight: 500; }
+    .info-label { color: var(--text-sub); font-size: 0.65rem; margin-bottom: 0px; font-weight: 500; }
     
     .btn-save {
-      background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000;
-      transition: 0.3s; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #00E676, #00C853); border: none; color: #000; transition: 0.3s; position: relative; overflow: hidden; padding: 10px 0;
     }
     .btn-save::before {
       content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-      animation: shine 3s infinite;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shine 3s infinite;
     }
     @keyframes shine { 100% { left: 200%; } }
     .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
@@ -243,62 +205,61 @@
     </div>
   </div>
 
-  <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
-    <div class="glass-card text-center position-relative">
-      
+  <div id="view-vcard" class="view-section vcard-container px-3">
+    <div class="glass-card text-center position-relative w-100">
       <div class="vcard-header"></div>
-      
-      <div class="card-body px-4 pb-4 pt-0">
+      <div class="card-body px-3 pb-3 pt-0">
         <div class="vcard-avatar-wrapper">
           <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover vcard-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
-        <h3 id="vcName" class="fw-bold mb-1 text-white fs-3">...</h3>
-        <p id="vcPosition" class="text-success fw-medium mb-4" style="font-size: 0.95rem;">...</p>
+        <h3 id="vcName" class="fw-bold mb-0 text-white fs-4">...</h3>
+        <p class="text-secondary small mb-1" id="vcNickname" style="font-size: 0.8rem;"></p>
+        <p id="vcPosition" class="text-success fw-medium mb-3" style="font-size: 0.85rem;">...</p>
         
         <div class="info-box text-start">
           <div class="info-item" style="animation-delay: 0.1s;">
             <div class="info-icon text-light"><i class="bi bi-person-vcard"></i></div>
-            <div>
+            <div class="lh-sm">
               <div class="info-label">รหัสพนักงาน (ID)</div>
-              <span id="vcEmpId" class="text-white fw-bold font-monospace fs-6">...</span>
+              <span id="vcEmpId" class="text-white fw-bold font-monospace" style="font-size: 0.9rem;">...</span>
             </div>
           </div>
 
           <div class="info-item" style="animation-delay: 0.2s;">
             <div class="info-icon text-danger"><i class="bi bi-cake2"></i></div>
-            <div>
+            <div class="lh-sm">
               <div class="info-label">อายุ (Age)</div>
-              <span id="vcAge" class="text-white fw-bold fs-6">...</span>
+              <span id="vcAge" class="text-white fw-bold" style="font-size: 0.9rem;">...</span>
             </div>
           </div>
 
           <div class="info-item" style="animation-delay: 0.3s;">
             <div class="info-icon text-warning"><i class="bi bi-calendar-check"></i></div>
-            <div>
+            <div class="lh-sm">
               <div class="info-label">อายุการทำงาน</div>
-              <span id="vcTenure" class="text-white fw-bold fs-6">...</span>
+              <span id="vcTenure" class="text-white fw-bold" style="font-size: 0.9rem;">...</span>
             </div>
           </div>
 
           <div class="info-item" style="animation-delay: 0.4s;">
             <div class="info-icon text-success"><i class="bi bi-telephone-fill"></i></div>
-            <div>
+            <div class="lh-sm">
               <div class="info-label">เบอร์โทรศัพท์ (Phone)</div>
-              <a id="vcPhone" href="#" class="text-white text-decoration-none fw-bold fs-5">...</a>
+              <a id="vcPhone" href="#" class="text-white text-decoration-none fw-bold" style="font-size: 1rem;">...</a>
             </div>
           </div>
 
           <div class="info-item" style="animation-delay: 0.5s;">
             <div class="info-icon text-info"><i class="bi bi-building"></i></div>
-            <div>
+            <div class="lh-sm">
               <div class="info-label">บริษัท (Company)</div>
-              <span class="text-white fw-bold" style="font-size: 0.85rem;">VKT & TRANSPORT LIMITED PARTNERSHIP</span>
+              <span class="text-white fw-bold" style="font-size: 0.8rem;">VKT & TRANSPORT LIMITED PARTNERSHIP</span>
             </div>
           </div>
         </div>
 
-        <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill py-3 fw-bold shadow-lg fs-5 mt-2" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.6s; opacity: 0;">
+        <button onclick="saveContact()" class="btn btn-save w-100 rounded-pill fw-bold shadow-lg fs-6 mt-1" style="animation: slideUpFade 0.6s forwards; animation-delay: 0.6s; opacity: 0;">
           <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ
         </button>
       </div>
@@ -310,7 +271,6 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
-    
     let allEmployees = [];
     let currentVcardLink = "";
     let vcardData = null;
@@ -344,20 +304,18 @@
     }
 
     function calcAge(dateString) {
-        if(!dateString) return 'ไม่ระบุวันเกิด';
+        if(!dateString || dateString === "-") return 'ไม่ระบุวันเกิด';
         var birthDate = new Date(dateString);
         var today = new Date();
         if(isNaN(birthDate.getTime())) return "รูปแบบวันที่ไม่ถูกต้อง";
         var age = today.getFullYear() - birthDate.getFullYear();
         var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
         return age + " ปี";
     }
 
     function calcTenure(dateString) { 
-        if(!dateString) return 'ไม่ระบุวันที่เริ่มงาน'; 
+        if(!dateString || dateString === "-") return 'ไม่ระบุวันที่เริ่มงาน'; 
         var start = new Date(dateString); 
         var now = new Date(); 
         start.setHours(0,0,0,0); now.setHours(0,0,0,0);
@@ -466,6 +424,10 @@
           vcardData = res;
           document.getElementById('vcPhoto').src = res.photo;
           document.getElementById('vcName').innerText = res.name;
+          
+          let nick = res.nickname && res.nickname !== "-" ? `(ชื่อเล่น: ${res.nickname})` : "";
+          document.getElementById('vcNickname').innerText = nick;
+
           document.getElementById('vcPosition').innerText = res.position;
           document.getElementById('vcEmpId').innerText = res.empId;
           document.getElementById('vcAge').innerText = calcAge(res.birthDate);
