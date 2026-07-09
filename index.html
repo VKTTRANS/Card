@@ -149,7 +149,6 @@
     @keyframes shine { 100% { left: 200%; } }
     .btn-save:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 230, 118, 0.4); }
 
-    /* CSS สำหรับปรับการแสดงผลบนมือถือให้เต็ม 1 จอพอดี */
     @media (max-width: 576px) {
       .vcard-container { max-width: 100%; padding: 0 !important; height: 100vh; display: flex; flex-direction: column; }
       .glass-card { border-radius: 0; min-height: 100vh; display: flex; flex-direction: column; border: none; }
@@ -183,6 +182,7 @@
     <div class="spinner-border text-success mt-3" style="width: 2rem; height: 2rem; border-width: 0.2em;"></div>
   </div>
 
+  <!-- หน้า Admin -->
   <div id="view-admin" class="view-section container py-5 mx-auto" style="max-width: 700px;">
     <div class="text-center mb-5" style="animation: slideUpFade 0.6s forwards;">
       <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle pulse-logo" style="width: 80px; height: 80px; background: rgba(0, 230, 118, 0.1); border: 2px solid var(--accent); box-shadow: var(--accent-glow);">
@@ -200,6 +200,7 @@
     <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;"></div>
   </div>
 
+  <!-- Modal Admin -->
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
@@ -217,6 +218,7 @@
     </div>
   </div>
 
+  <!-- หน้าแสดงนามบัตรมือถือ -->
   <div id="view-vcard" class="view-section vcard-container px-3 py-4 py-md-5">
     <div class="glass-card text-center position-relative w-100">
       <div class="vcard-header"></div>
@@ -282,6 +284,7 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
+    
     let allEmployees = [];
     let currentVcardLink = "";
     let vcardData = null;
@@ -435,18 +438,25 @@
           vcardData = res;
           document.getElementById('vcPhoto').src = res.photo;
           
-          let nick = (res.nickname && res.nickname.trim() !== "" && res.nickname !== "-") ? `(${res.nickname})` : "";
-          document.getElementById('vcName').innerText = res.name + " " + nick;
-          
-          document.getElementById('vcPosition').innerText = res.position;
-          document.getElementById('vcEmpId').innerText = res.empId;
+          // แก้ไขบักชื่อเล่นตรงนี้ ดัก Error เรียบร้อย 100%
+          let nickStr = String(res.nickname || "").trim();
+          if (nickStr !== "" && nickStr !== "-" && nickStr !== "undefined") {
+              document.getElementById('vcName').innerText = res.name + " (" + nickStr + ")";
+          } else {
+              document.getElementById('vcName').innerText = res.name;
+          }
+
+          document.getElementById('vcPosition').innerText = res.position || "-";
+          document.getElementById('vcEmpId').innerText = res.empId || "-";
           document.getElementById('vcAge').innerText = calcAge(res.birthDate);
           document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
           
-          let phoneText = res.phone;
-          if(phoneText.length === 10) phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
-          document.getElementById('vcPhone').innerText = phoneText;
-          document.getElementById('vcPhone').href = "tel:" + res.phone;
+          let phoneText = String(res.phone || "");
+          if(phoneText.length === 10) {
+              phoneText = phoneText.substring(0,3) + "-" + phoneText.substring(3,6) + "-" + phoneText.substring(6);
+          }
+          document.getElementById('vcPhone').innerText = phoneText || "-";
+          document.getElementById('vcPhone').href = "tel:" + (res.phone || "");
         } else {
           Swal.fire({icon: 'error', title: 'ไม่สามารถแสดงข้อมูลได้', text: res.message, background: '#161b22', color: '#fff'})
               .then(() => window.location.href = window.location.href.split('?')[0]); 
