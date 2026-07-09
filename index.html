@@ -4,113 +4,162 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>VKT e-Business Card</title>
+  
+  <link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=1_jSdNmS0pr8HoFuAINPBGqjrNq8xcwCG">
+  
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
   <style>
     :root {
-      --bg-dark: #121212;
-      --card-bg: rgba(30, 30, 30, 0.7);
+      --bg-dark: #0f1115;
+      --card-bg: rgba(25, 28, 36, 0.7);
       --accent: #00E676;
+      --accent-hover: #00c853;
     }
     body {
       font-family: 'Sarabun', sans-serif;
       background-color: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 230, 118, 0.1) 0%, transparent 50%);
       color: #fff;
       min-height: 100vh;
     }
     .view-section { display: none; }
-    .view-section.active { display: block; animation: fadeIn 0.5s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .view-section.active { display: block; animation: fadeUp 0.5s ease-out; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     
     .glass-card {
       background: var(--card-bg);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     }
     
-    /* Search List */
+    /* Search Bar Styles */
+    .search-input:focus {
+      background-color: rgba(0,0,0,0.5) !important;
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.2) !important;
+      color: #fff !important;
+    }
+
+    /* List Styles */
     .emp-list-item {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px; margin-bottom: 8px; padding: 12px 15px;
-      cursor: pointer; transition: 0.2s;
+      background: rgba(255,255,255,0.02); 
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px; margin-bottom: 12px; padding: 16px 20px;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .emp-list-item:hover { background: rgba(0, 230, 118, 0.1); border-color: var(--accent); }
+    .emp-list-item:hover { 
+      background: rgba(0, 230, 118, 0.08); 
+      border-color: rgba(0, 230, 118, 0.3); 
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .btn-qr { transition: all 0.3s; }
+    .emp-list-item:hover .btn-qr { background-color: var(--accent); color: #000 !important; }
+
+    /* Scrollbar ปรับให้สวยกลืนกับเว็บ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 230, 118, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 230, 118, 0.6); }
     
-    .spinner-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .spinner-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   </style>
 </head>
-<body class="bg-dark">
+<body>
 
   <div id="loader" class="spinner-wrapper">
-    <div class="spinner-border text-success" style="width: 3rem; height: 3rem;"></div>
-    <h5 class="mt-3 text-success">กำลังโหลดข้อมูล...</h5>
+    <div class="spinner-border text-success" style="width: 3.5rem; height: 3.5rem; border-width: 0.25em;"></div>
+    <h5 class="mt-4 text-success fw-bold tracking-wide">กำลังเชื่อมต่อข้อมูล VKT...</h5>
   </div>
 
-  <div id="view-admin" class="view-section container py-4 mx-auto" style="max-width: 600px;">
-    <div class="text-center mb-4">
-      <h3 class="text-success fw-bold"><i class="bi bi-qr-code-scan me-2"></i>ระบบสร้างนามบัตร (Admin)</h3>
-      <p class="text-muted small">ค้นหารายชื่อพนักงานเพื่อสร้าง QR Code สำหรับนามบัตรดิจิทัล</p>
+  <div id="view-admin" class="view-section container py-5 mx-auto" style="max-width: 700px;">
+    <div class="text-center mb-5">
+      <div class="d-inline-flex align-items-center justify-content-center mb-3 rounded-circle" style="width: 70px; height: 70px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0,230,118,0.3);">
+        <i class="bi bi-qr-code-scan text-success" style="font-size: 2rem;"></i>
+      </div>
+      <h3 class="text-white fw-bold mb-1">VKT Digital vCard</h3>
+      <p class="text-secondary small">ค้นหารายชื่อพนักงานเพื่อดึง QR Code ไปสั่งพิมพ์หรือแชร์</p>
     </div>
 
-    <div class="input-group mb-4 shadow-sm">
-      <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
-      <input type="text" id="searchInput" class="form-control bg-dark text-white border-secondary shadow-none" placeholder="ค้นหาชื่อ, รหัสพนักงาน..." onkeyup="filterList()">
+    <div class="input-group mb-4 shadow-lg rounded-pill overflow-hidden border border-secondary border-opacity-25" style="background: rgba(0,0,0,0.5);">
+      <span class="input-group-text bg-transparent border-0 text-success ps-4"><i class="bi bi-search fs-5"></i></span>
+      <input type="text" id="searchInput" class="form-control bg-transparent text-white border-0 shadow-none py-3 search-input" placeholder="พิมพ์ชื่อ หรือ รหัสพนักงานที่ต้องการค้นหา..." onkeyup="filterList()">
     </div>
 
-    <div id="empList" class="overflow-auto pe-2" style="max-height: 65vh;">
+    <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;">
       </div>
   </div>
 
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content bg-dark border border-secondary text-center p-4">
-        <h5 id="qrEmpName" class="text-white fw-bold mb-1">...</h5>
-        <p id="qrEmpPos" class="text-success small mb-3">...</p>
-        <div class="bg-white p-2 rounded d-inline-block mx-auto mb-3">
-          <img id="qrImage" src="" alt="QR Code" width="200" height="200">
+      <div class="modal-content text-center p-4" style="background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0,230,118,0.4); border-radius: 20px;">
+        <h5 id="qrEmpName" class="text-white fw-bold mb-1 fs-4">...</h5>
+        <p id="qrEmpPos" class="text-success small mb-3 fw-bold">...</p>
+        <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg">
+          <img id="qrImage" src="" alt="QR Code" width="220" height="220" class="rounded">
         </div>
         <div class="d-grid gap-2">
-          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold"><i class="bi bi-download me-2"></i>ดาวน์โหลด QR Code</a>
-          <button class="btn btn-outline-secondary rounded-pill" onclick="copyLink()"><i class="bi bi-link-45deg me-2"></i>คัดลอกลิงก์นามบัตร</button>
+          <a id="downloadQrBtn" href="#" download="QRCode.png" class="btn btn-success rounded-pill fw-bold py-2"><i class="bi bi-download me-2"></i>บันทึกรูป QR Code</a>
+          <button class="btn btn-dark border-secondary rounded-pill py-2 text-light" onclick="copyLink()"><i class="bi bi-link-45deg me-2 fs-5 align-middle"></i>คัดลอกลิงก์นามบัตร</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="view-vcard" class="view-section container py-5 mx-auto" style="max-width: 500px;">
-    <div class="glass-card text-center overflow-hidden position-relative shadow-lg">
-      <div style="height: 140px; background: linear-gradient(135deg, #00E676 0%, #007bb5 100%);"></div>
+  <div id="view-vcard" class="view-section container py-4 py-md-5 mx-auto" style="max-width: 500px;">
+    <div class="glass-card text-center overflow-hidden position-relative">
+      <div style="height: 160px; background: linear-gradient(135deg, #00E676 0%, #004d40 100%);"></div>
       
       <div class="card-body p-4 pt-0 position-relative">
-        <div class="position-relative d-inline-block mb-3" style="margin-top: -70px;">
-          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover" style="width: 140px; height: 140px; background-color: #222; border: 4px solid #121212;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+        <div class="position-relative d-inline-block mb-3" style="margin-top: -80px;">
+          <img id="vcPhoto" src="" class="rounded-circle shadow-lg object-fit-cover" style="width: 150px; height: 150px; background-color: #222; border: 5px solid var(--bg-dark);" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         </div>
         
-        <h3 id="vcName" class="fw-bold mb-1 text-white">...</h3>
+        <h3 id="vcName" class="fw-bold mb-1 text-white fs-2">...</h3>
         <p id="vcPosition" class="text-success fw-bold mb-4">...</p>
         
-        <div class="bg-black bg-opacity-25 rounded-4 p-3 mb-4 border border-secondary border-opacity-25 text-start">
+        <div class="bg-black bg-opacity-40 rounded-4 p-3 p-md-4 mb-4 border border-secondary border-opacity-25 text-start shadow-inner">
+          
           <div class="d-flex align-items-center mb-3 border-bottom border-secondary border-opacity-25 pb-3">
-            <div class="bg-dark rounded p-2 me-3 text-success"><i class="bi bi-telephone-fill fs-5"></i></div>
+            <div class="bg-dark rounded p-2 me-3 text-light border border-secondary border-opacity-50"><i class="bi bi-person-vcard fs-5"></i></div>
             <div>
-              <small class="text-muted d-block" style="font-size: 0.75rem;">เบอร์โทรศัพท์</small>
+              <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">รหัสพนักงาน (ID)</small>
+              <span id="vcEmpId" class="text-white fw-bold fs-6 font-monospace tracking-wide">...</span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center mb-3 border-bottom border-secondary border-opacity-25 pb-3">
+            <div class="bg-dark rounded p-2 me-3 text-warning border border-secondary border-opacity-50"><i class="bi bi-calendar-check fs-5"></i></div>
+            <div>
+              <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">อายุการทำงาน</small>
+              <span id="vcTenure" class="text-white fw-bold fs-6">...</span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center mb-3 border-bottom border-secondary border-opacity-25 pb-3">
+            <div class="bg-dark rounded p-2 me-3 text-success border border-secondary border-opacity-50"><i class="bi bi-telephone-fill fs-5"></i></div>
+            <div>
+              <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">เบอร์โทรศัพท์ (Phone)</small>
               <a id="vcPhone" href="#" class="text-white text-decoration-none fw-bold fs-5">...</a>
             </div>
           </div>
+
           <div class="d-flex align-items-center">
-            <div class="bg-dark rounded p-2 me-3 text-info"><i class="bi bi-building fs-5"></i></div>
+            <div class="bg-dark rounded p-2 me-3 text-info border border-secondary border-opacity-50"><i class="bi bi-building fs-5"></i></div>
             <div>
-              <small class="text-muted d-block" style="font-size: 0.75rem;">บริษัท</small>
+              <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">บริษัท (Company)</small>
               <span class="text-white fw-bold">VKT Transport System</span>
             </div>
           </div>
         </div>
 
-        <button onclick="saveContact()" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-lg text-dark" style="background: linear-gradient(135deg, #00E676, #00C853); border:none;">
-          <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ (Save Contact)
+        <button onclick="saveContact()" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-lg text-dark fs-5 hover-scale" style="background: linear-gradient(135deg, #00E676, #00C853); border:none; transition: 0.3s;">
+          <i class="bi bi-person-plus-fill me-2"></i>บันทึกลงรายชื่อติดต่อ
         </button>
       </div>
     </div>
@@ -120,7 +169,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-    // อัปเดต URL API ที่ถูกต้องแล้ว
     const API_URL = "https://script.google.com/macros/s/AKfycbzpmhyLn-xiyxDPPKrIPfPgAkAOs4LEL5GVkTqkdAS4025NmhLc75UT4NclyWg50KRE/exec";
     
     let allEmployees = [];
@@ -155,6 +203,40 @@
       }
     }
 
+    // ฟังก์ชันคำนวณอายุงานแบบเดียวกับระบบหลัก
+    function calcTenure(dateString) { 
+        if(!dateString) return 'ไม่ระบุวันที่เริ่มงาน'; 
+        var start = new Date(dateString); 
+        var now = new Date(); 
+        start.setHours(0,0,0,0);
+        now.setHours(0,0,0,0);
+
+        if(isNaN(start.getTime())) return "รูปแบบวันที่ไม่ถูกต้อง"; 
+        if (start.getTime() > now.getTime()) {
+             return 'รอเริ่มงาน';
+        }
+
+        var years = now.getFullYear() - start.getFullYear(); 
+        var months = now.getMonth() - start.getMonth(); 
+        var days = now.getDate() - start.getDate(); 
+        
+        if (days < 0) { 
+            months--; 
+            var prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); 
+            days += prevMonth.getDate(); 
+        } 
+        if (months < 0) { 
+            years--; 
+            months += 12; 
+        } 
+        var result = []; 
+        if (years > 0) result.push(years + " ปี"); 
+        if (months > 0) result.push(months + " เดือน"); 
+        if (days > 0) result.push(days + " วัน"); 
+        if (result.length === 0) return "เริ่มงานวันนี้"; 
+        return result.join(" "); 
+    }
+
     // ==========================================
     // สำหรับหน้า Admin
     // ==========================================
@@ -162,7 +244,6 @@
       try {
         const result = await callAPI({ action: 'getAllEmployees' });
         
-        // เช็กว่าข้อมูลที่ได้มาเป็น Array หรือไม่ ป้องกัน Error (.filter is not a function)
         if (Array.isArray(result)) {
             allEmployees = result;
         } else {
@@ -174,26 +255,31 @@
         document.getElementById('loader').style.display = 'none';
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
-        Swal.fire({icon: 'error', title: 'การเชื่อมต่อผิดพลาด', text: 'ไม่สามารถดึงข้อมูลจากระบบได้ โปรดตรวจสอบการอัปเดต API', background: '#222', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'การเชื่อมต่อผิดพลาด', text: 'ไม่สามารถดึงข้อมูลจากระบบได้', background: '#222', color: '#fff'});
       }
     }
 
     function renderList(list) {
       const container = document.getElementById('empList');
       if (!list || list.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted py-4">ไม่พบข้อมูลพนักงาน</div>';
+        container.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-person-x fs-1 d-block mb-3"></i>ไม่พบข้อมูลพนักงาน</div>';
         return;
       }
       
       let html = '';
       list.forEach(emp => {
         html += `
-          <div class="emp-list-item d-flex justify-content-between align-items-center" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
-            <div>
-              <div class="fw-bold text-white">${emp.name}</div>
-              <div class="small text-muted">${emp.empId} | ${emp.position}</div>
+          <div class="emp-list-item d-flex justify-content-between align-items-center shadow-sm" onclick="showQR('${emp.empId}', '${emp.name}', '${emp.position}')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center text-success" style="width: 45px; height: 45px; border: 1px solid rgba(0,230,118,0.3);">
+                <i class="bi bi-person-fill fs-4"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-white fs-6 mb-1">${emp.name}</div>
+                <div class="small text-muted" style="font-size: 0.8rem;"><span class="text-success font-monospace">${emp.empId}</span> &bull; ${emp.position}</div>
+              </div>
             </div>
-            <i class="bi bi-qr-code text-success fs-3"></i>
+            <button class="btn btn-outline-success btn-sm rounded-circle btn-qr d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;"><i class="bi bi-qr-code fs-5"></i></button>
           </div>
         `;
       });
@@ -208,17 +294,16 @@
     }
 
     function showQR(empId, name, position) {
-      // ดึง URL ปัจจุบันมาตัดพารามิเตอร์ทิ้ง แล้วต่อด้วย ?user=ID
       const baseUrl = window.location.href.split('?')[0]; 
       currentVcardLink = baseUrl + "?user=" + empId;
       
-      const qrUrl = "https://quickchart.io/qr?size=400&text=" + encodeURIComponent(currentVcardLink);
+      const qrUrl = "https://quickchart.io/qr?size=500&text=" + encodeURIComponent(currentVcardLink);
       
       document.getElementById('qrEmpName').innerText = name;
       document.getElementById('qrEmpPos').innerText = position;
       
       const qrImg = document.getElementById('qrImage');
-      qrImg.src = ""; // เคลียร์ภาพเก่า
+      qrImg.src = ""; 
       qrImg.src = qrUrl;
 
       document.getElementById('downloadQrBtn').href = qrUrl;
@@ -229,12 +314,12 @@
 
     function copyLink() {
       navigator.clipboard.writeText(currentVcardLink).then(() => {
-        Swal.fire({toast: true, position: 'top', icon: 'success', title: 'คัดลอกลิงก์แล้ว', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff'});
+        Swal.fire({toast: true, position: 'top', icon: 'success', title: 'คัดลอกลิงก์นามบัตรแล้ว', showConfirmButton: false, timer: 1500, background: '#222', color: '#fff'});
       });
     }
 
     // ==========================================
-    // สำหรับหน้าแสดงนามบัตร
+    // สำหรับหน้าแสดงนามบัตร (vCard)
     // ==========================================
     async function loadVCard(empId) {
       try {
@@ -246,11 +331,13 @@
           document.getElementById('vcPhoto').src = res.photo;
           document.getElementById('vcName').innerText = res.name;
           document.getElementById('vcPosition').innerText = res.position;
+          document.getElementById('vcEmpId').innerText = res.empId;
+          document.getElementById('vcTenure').innerText = calcTenure(res.startDate);
           document.getElementById('vcPhone').innerText = res.phone;
           document.getElementById('vcPhone').href = "tel:" + res.phone;
         } else {
-          Swal.fire({icon: 'error', title: 'ผิดพลาด', text: res.message, background: '#222', color: '#fff'})
-              .then(() => window.location.href = window.location.href.split('?')[0]); // เด้งกลับหน้าแอดมิน
+          Swal.fire({icon: 'error', title: 'ไม่สามารถแสดงข้อมูลได้', text: res.message, background: '#222', color: '#fff'})
+              .then(() => window.location.href = window.location.href.split('?')[0]); 
         }
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
@@ -261,13 +348,14 @@
     function saveContact() {
       if(!vcardData) return;
       var d = vcardData;
-      var vcf = "BEGIN:VCARD\nVERSION:3.0\nN:;" + d.name + ";;;\nFN:" + d.name + "\nORG:VKT Transport System\nTITLE:" + d.position + "\nTEL;TYPE=CELL:" + d.phone + "\nEND:VCARD";
+      // ใส่รหัสพนักงานไว้ในส่วนของ Note
+      var vcf = "BEGIN:VCARD\nVERSION:3.0\nN:;" + d.name + ";;;\nFN:" + d.name + "\nORG:VKT Transport System\nTITLE:" + d.position + "\nTEL;TYPE=CELL:" + d.phone + "\nNOTE:Employee ID: " + d.empId + "\nEND:VCARD";
       
       var blob = new Blob([vcf], { type: "text/vcard" });
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
-      a.download = d.name + ".vcf";
+      a.download = d.name + "_VKT.vcf";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
