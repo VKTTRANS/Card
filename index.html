@@ -140,7 +140,6 @@
     .pulse-logo { animation: scalePulse 1.5s infinite; }
     @keyframes scalePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #00E676); } }
 
-    /* CSS บัตรพนักงาน (สำหรับ Export) ให้จัดกึ่งกลางชัวร์ๆ 100% */
     #idCardExport {
       position: fixed; top: 0; left: 0; z-index: -9999; opacity: 0; pointer-events: none;
       width: 540px; height: 856px; background-color: #ffffff; border-radius: 20px; overflow: hidden;
@@ -179,11 +178,13 @@
     <div id="empList" class="overflow-auto pe-2" style="max-height: 60vh; padding-bottom: 20px;"></div>
   </div>
 
+  <!-- นำแท็ก qrEmpId ใส่กลับมาแล้วครับ ตรงจุดนี้แหละที่บั๊ก -->
   <div class="modal fade" id="qrModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content text-center p-4 glass-card border-success" style="animation: none;">
         <h5 id="qrEmpName" class="text-white fw-bold mb-1 fs-4">...</h5>
-        <p id="qrEmpPos" class="text-success small mb-3 fw-bold">...<br><span id="qrEmpId" class="text-white font-monospace fw-normal"></span></p>
+        <p id="qrEmpPos" class="text-success small mb-2 fw-bold">...</p>
+        <div class="mb-3"><span id="qrEmpId" class="badge bg-dark border border-secondary text-white font-monospace">...</span></div>
         <div class="bg-white p-3 rounded-4 d-inline-block mx-auto mb-4 shadow-lg" style="border: 3px solid var(--accent);">
           <canvas id="qrCanvas" class="rounded"></canvas>
         </div>
@@ -434,7 +435,10 @@
       currentVcardLink = baseUrl + "?user=" + empId;
       document.getElementById('qrEmpName').innerText = name;
       document.getElementById('qrEmpPos').innerText = position;
+      
+      // ตัวแปรนี้จะไม่ error แล้วครับ
       document.getElementById('qrEmpId').innerText = `ID: ${empId}`;
+      
       const qr = new QRious({ element: document.getElementById('qrCanvas'), value: currentVcardLink, size: 220, level: 'M', padding: 5 });
       document.getElementById('downloadQrBtn').href = qr.toDataURL();
       document.getElementById('downloadQrBtn').setAttribute('download', 'QR_' + empId + '.png');
@@ -502,7 +506,6 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
-    // แคปเจอร์นามบัตร (Dark Mode) - ล็อกสัดส่วน ป้องกันการย่นบนมือถือ
     async function downloadCardImage() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างรูปภาพ...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
@@ -511,11 +514,10 @@
       const actionButtons = document.getElementById('vcard-action-buttons');
       const origStyle = cardElement.getAttribute('style') || '';
       
-      // บังคับให้การ์ดมีขนาดคงที่แบบ Desktop
       actionButtons.style.display = 'none'; 
       cardElement.style.cssText = 'width: 420px !important; max-width: 420px !important; margin: 0 auto !important; position: relative; background: #161b22; border-radius: 24px; padding-bottom: 20px;';
       
-      await new Promise(r => setTimeout(r, 100)); // ให้เวลาเบราว์เซอร์จัดหน้า
+      await new Promise(r => setTimeout(r, 100));
 
       try {
         const canvas = await html2canvas(cardElement, {
@@ -535,13 +537,12 @@
       }
     }
 
-    // แคปเจอร์บัตรพนักงาน (White Mode) - ล็อกกึ่งกลาง 100%
     async function downloadIDCard() {
       if(!vcardData) return;
       Swal.fire({title: 'กำลังสร้างบัตรพนักงาน...', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#161b22', color: '#fff'});
       
       const idCardElement = document.getElementById('idCardExport');
-      idCardElement.style.opacity = '1'; // ดึงให้เบราว์เซอร์มองเห็นชั่วคราว
+      idCardElement.style.opacity = '1'; 
       
       await new Promise(r => setTimeout(r, 100));
 
@@ -550,7 +551,7 @@
           scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 540, height: 856, logging: false
         });
         
-        idCardElement.style.opacity = '0'; // ซ่อนกลับไป
+        idCardElement.style.opacity = '0'; 
         
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png'); link.download = vcardData.empId + '_' + vcardData.name + '_IDCard.png'; link.click();
